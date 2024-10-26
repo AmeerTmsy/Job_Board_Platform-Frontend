@@ -32,7 +32,7 @@ function LoginForm(props) {
             }
             if (data.userType === 'employer') {
                 delete data.userType
-                const response = await axios.post(`http://localhost:3000/employer/auth/login`, data, { withCredentials: true })
+                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/employer/auth/login`, data, { withCredentials: true })
                 dispatch(authenticatUser(response?.data?.data))
                 // console.log("print 1:", user)
                 // console.log(response);
@@ -68,12 +68,12 @@ function LoginForm(props) {
                 className='border-2 flex flex-col gap-2 sm:w-full md:w-2/4 mx-auto rounded-md pt-10' >
 
                 <div className="w-11/12 mx-auto m-1 flex flex-col">
-                    <input className='p-1 px-3 rounded-sm bg-slate-200 border-0' type='email' placeholder='email' {...register("email", { required: true, pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ })} />
+                    <input className='p-1 px-3 rounded-sm bg-slate-200 border-0 text-black' type='email' placeholder='email' {...register("email", { required: true, pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ })} />
                     {errors.email && <ErrorMessage error={errors.email} fieldName="email" />}
 
                 </div>
                 <div className="w-11/12 mx-auto m-1 flex flex-col">
-                    <input className=' p-1 px-3 rounded-sm bg-slate-200 border-0' type='password' placeholder='password' {...register("password", {
+                    <input className=' p-1 px-3 rounded-sm bg-slate-200 border-0 text-black' type='password' placeholder='password' {...register("password", {
                         required: true,
                         pattern: {
                             value: /^.{4,}$/,
@@ -85,7 +85,7 @@ function LoginForm(props) {
                 </div>
 
                 <div className='w-11/12 mx-auto text-blue-600 flex flex-col gap-5'>
-                    <Link className='pl-3' to={'/changePassword'}>forget your password!</Link>
+                    {/* <Link className='pl-3' to={'/changePassword'}>forget your password!</Link> */}
                     <Link className='pl-3' to={'/sign_up'}>don't have an account?</Link>
                 </div>
 

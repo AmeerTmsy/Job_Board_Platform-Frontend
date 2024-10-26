@@ -23,12 +23,12 @@ function ThemeColor() {
         <Button
           variant="outline"
           size="icon"
-          className={`${buttonStyles} transition-colors duration-300 rounded-full`} // Smooth transition effect
+          className={`${buttonStyles} border transition-colors duration-300 rounded-full ${theme !== 'dark' && '!bg-white'}`} // Smooth transition effect
         >
           {theme === 'dark' ? (
             <Moon className="h-[1.2rem] w-[1.2rem] transition-all" />
           ) : (
-            <Sun className="h-[1.2rem] w-[1.2rem] transition-all" />
+            <Sun className="h-[1.2rem] w-[1.2rem] transition-all text-black" />
           )}
           <span className="sr-only">Toggle theme</span>
         </Button>

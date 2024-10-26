@@ -2,8 +2,10 @@ import React from 'react';
 import { useForm } from "react-hook-form";
 import { Link } from 'react-router-dom';
 import ErrorMessage from './SignUpErrorMessage';
+import { useTheme } from 'next-themes';
 
 function SignUpForm(props) {
+    const { theme, setTheme } = useTheme();
     const {
         register,
         handleSubmit,
@@ -25,7 +27,7 @@ function SignUpForm(props) {
                 <div className="mb-4">
                     <input
                         {...register("name", { required: true })}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
                         type="text"
                         placeholder="Name"
                     />
@@ -35,13 +37,13 @@ function SignUpForm(props) {
                 <div className="mb-4 grid grid-cols-2 gap-4">
                     <input
                         {...register("profession", { required: true })}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
                         type="text"
                         placeholder="Your Profession"
                     />
                     <input
                         {...register("experienced", { required: true })}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
                         type="text"
                         placeholder="Years of experience"
                     />
@@ -52,7 +54,7 @@ function SignUpForm(props) {
                 <div className="mb-4">
                     <textarea
                         {...register("bio", { required: true })}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
                         placeholder="Bio"
                     />
                     <ErrorMessage error={errors.bio} fieldName="bio" />
@@ -61,7 +63,7 @@ function SignUpForm(props) {
                 <div className="mb-4">
                     <input
                         {...register("email", { required: true, pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ })}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
                         type="email"
                         placeholder="Email"
                     />
@@ -77,7 +79,7 @@ function SignUpForm(props) {
                                 message: "Password must be at least 8 characters, with at least one uppercase letter, one lowercase letter, and one number"
                             }
                         })}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
                         type="password"
                         placeholder="Password"
                     />
@@ -86,7 +88,7 @@ function SignUpForm(props) {
                             required: true,
                             validate: value => value === password || "Passwords do not match"
                         })}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${theme === 'dark' ?'text-white' :''}`}
                         type="password"
                         placeholder="Confirm password"
                     />
@@ -96,21 +98,23 @@ function SignUpForm(props) {
 
                 <div className="mb-4">
                     <div>
-                        <label>
+                        <label className="text-black cursor-pointer">
                             <input
                                 {...register("userType", { required: true })}
                                 type="radio"
                                 value="employee"
+                                className='appearance-none h-3 w-3 focus:h-2 focus:w-2 border border-black rounded-full checked:bg-blue-300 checked:border-transparent focus:outline-none mr-2'
                             />
                             Looking for a job
                         </label>
                     </div>
-                    <div>
-                        <label>
+                    <div className="bg-white text-white">
+                        <label className="text-black cursor-pointer">
                             <input
                                 {...register("userType", { required: true })}
                                 type="radio"
                                 value="employer"
+                                className='appearance-none h-3 w-3 focus:h-2 focus:w-2 border border-black rounded-full checked:bg-blue-300 checked:border-transparent focus:outline-none mr-2'
                             />
                             Looking for an employee
                         </label>
