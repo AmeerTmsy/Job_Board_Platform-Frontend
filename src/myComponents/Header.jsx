@@ -21,13 +21,13 @@ function Header(props) {
                             }
                             <li><Link to={'/'}>jobs</Link></li>
                             {
-                                isLoggedIn ? <li><Link to={`/${user.userType}/companies`}>companies</Link></li> : <li><Link to={'/login'}>login</Link></li>
+                                isLoggedIn ? <li><Link to={`/${user?.userType}/companies`}>companies</Link></li> : <li><Link to={'/login'}>login</Link></li>
                             }
                             {
-                                isLoggedIn ? <li>{user.userType === 'employer' && <Link to={`/${user.userType}/employees`}>employees</Link>}</li> : ""
+                                isLoggedIn ? <li>{user?.userType === 'employer' && <Link to={`/${user?.userType}/employees`}>employees</Link>}</li> : ""
                             }
                             {
-                                isLoggedIn ? <li><Link to={`/${user.userType}/account`}><div className='w-10 h-10 bg-white text-black rounded-full flex justify-center items-center'>{user?.name?.charAt(0).toUpperCase()}</div></Link></li> : ""
+                                isLoggedIn ? <li><Link to={`/${user?.userType}/account`}><div className='w-10 h-10 bg-white text-black rounded-full flex justify-center items-center'>{user?.name?.charAt(0).toUpperCase()}</div></Link></li> : ""
                             }
                             {
                                 isLoggedIn ? "" : <li> <ThemeColor /> </li>

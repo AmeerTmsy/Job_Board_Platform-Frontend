@@ -24,9 +24,9 @@ function Jobs(props) {
             setUrlParam("");
         }
     }
-    // console.log(`jobs${user.userType === 'admin' ? urlParam : `?verifiedJob=approved`}`);
+    // console.log(`jobs${user?.userType === 'admin' ? urlParam : `?verifiedJob=approved`}`);
 
-    const [jobs, loading, error] = useFetchList(`jobs${user.userType === 'admin' ? urlParam : `?verifiedJob=approved`}`);
+    const [jobs, loading, error] = useFetchList(`jobs${user?.userType === 'admin' ? urlParam : `?verifiedJob=approved`}`);
     // useEffect(() => {
     //     // if (error) console.log("error: ", error);
     //     // if (!error) console.log("error");
@@ -45,7 +45,7 @@ function Jobs(props) {
                         <input className='bg-slate-100 text-black' type="text" name="search" id="search" placeholder='search' />
                         <div className=' border-l-2 custom-input'><i className="ri-search-line px-2 focus:outline-slate-100 text-black"></i></div>
                     </div>
-                    {user.userType === 'admin' && <div>
+                    {user?.userType === 'admin' && <div>
                         <button onClick={() => bringData("all")} className="bg-gray-200 w-20 hover:shadow-md rounded-l text-black">all</button>
                         <button onClick={() => bringData("approved")} className="bg-green-200 w-20 hover:shadow-md text-green-700">approved</button>
                         <button onClick={() => bringData("pending")} className="bg-yellow-200 w-20 hover:shadow-md text-yellow-600">pending</button>

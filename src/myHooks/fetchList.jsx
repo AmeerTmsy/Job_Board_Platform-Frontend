@@ -23,11 +23,9 @@ export const useFetchList = (url) => {
             await axios.get(`${import.meta.env.VITE_API_BASE_URL}/${url}`, { withCredentials: true })
                 .then(response => {
                     setError(null)
-                    setTimeout(() => {
-                        setData(response?.data?.data);
-                        setIsLoading(false);
-                        setError(null);
-                    }, 500);
+                    setData(response?.data?.data);
+                    setIsLoading(false);
+                    setError(null);
                 })
                 .catch(error => {
                     console.log(error/*.response.data.message === 'Jobs not found' && 'there is not any regcted jobs'*/, "|| Unable to fetch list");

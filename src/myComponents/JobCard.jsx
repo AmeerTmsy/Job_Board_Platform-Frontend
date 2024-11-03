@@ -59,17 +59,17 @@ function JobCard({ job }) {
     return (
         <div className='relative m-2 py-4 sm:px-5 px-10 md:w-2/5 rounded-md ease-in-out duration-300 hover:shadow-md bg-lime-50 text-black'>
             {/* Approved Label */}
-            {user.userType === 'admin' && (
+            {user?.userType === 'admin' && (
                 <span className={`absolute top-3 right-0 ${badgColor} text-xs font-semibold px-2 py-1 rounded-l`}>
                     {job.verifiedJob}
                 </span>
             )}
-            {user.userType === 'employee' && (
+            {user?.userType === 'employee' && (
                 <span className={`absolute top-0 right-0 text-xs font-semibold px-2 py-1 rounded-l`}>
                     <i onClick={manageJobSave} className={`ri-heart-fill font-normal text-xl ${saveJobColor} cursor-pointer`}></i>
                 </span>
             )}
-            {user.userType === 'employer' && myJob && (
+            {user?.userType === 'employer' && myJob && (
                 <span className={`absolute top-3 right-0 bg-gray-700 text-white text-xs font-semibold px-2 py-1 rounded-l`}>
                     Your Job
                 </span>

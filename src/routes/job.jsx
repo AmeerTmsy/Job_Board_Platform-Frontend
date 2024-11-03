@@ -23,14 +23,6 @@ function Job(props) {
     const [saveJobBadgColor, setSaveJobBadgColor] = useState('');
     const [myJob, setMyJob] = useState(false);
     const dispatch = useDispatch();
-    const { register, handleSubmit } = useForm();
-    const onSubmit = (data) => {
-        console.log("Form Data:", data);
-    };
-
-    // useEffect(() => {
-    //     // if (employeeSavedJobs) employeeSavedJobs.map(item => console.log(item))
-    // }, [employeeSavedJobs])
 
     useEffect(() => {
         if (!loading) {
