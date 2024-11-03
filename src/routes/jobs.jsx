@@ -24,16 +24,9 @@ function Jobs(props) {
             setUrlParam("");
         }
     }
-    // console.log(`jobs${user?.userType === 'admin' ? urlParam : `?verifiedJob=approved`}`);
-
+    
     const [jobs, loading, error] = useFetchList(`jobs${user?.userType === 'admin' ? urlParam : `?verifiedJob=approved`}`);
-    // useEffect(() => {
-    //     // if (error) console.log("error: ", error);
-    //     // if (!error) console.log("error");
-    // }, [jobs, loading , error]);
-
-    // console.log("Loading:", loading);
-    // console.log("jobs:", jobs);
+    
     return (
         <>
             <main>
@@ -65,7 +58,7 @@ function Jobs(props) {
                         {error === 'Jobs not found' ?
                             <div className='flex flex-col sm:flex-row justify-between items-center p-4 '> not any jobs </div>
                             :
-                            jobs.map(item => (<JobCard key={item._id} job={item} />))
+                            jobs?.map(item => (<JobCard key={item._id} job={item} />))
                         }
                     </div>}
             </main>

@@ -23,7 +23,7 @@ function Employees(props) {
             {loading === true ?
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {Array.from({ length: 6 }).map((_, index) => (
-                        <div className=" p-4 rounded-lg shadow-sm flex flex-row justify-center">
+                        <div key={index} className=" p-4 rounded-lg shadow-sm flex flex-row justify-center">
                             <SkeletonCard key={index} />
                         </div>
                     ))}
@@ -32,7 +32,7 @@ function Employees(props) {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {employees.map((employee, index) => (
                         <div key={index} className="border p-4 rounded-lg shadow-sm">
-                            {console.log(employee.id)}
+                            {/* {console.log(employee.id)} */}
                             <Link to={`/employer/employees/${employee._id}`}>
                                 <div className="flex flex-col items-center">
                                     <img

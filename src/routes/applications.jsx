@@ -10,9 +10,9 @@ function Applications({ job }) {
     const { user } = useSelector(state => state.user);
     const [applications, applicationLoading, applicationError] = useFetchList(`applications?jobId=${job._id}`);
 
-    useEffect(() => {
-        console.log(applications)
-    }, [applications]);
+    // useEffect(() => {
+    //     // console.log(applications)
+    // }, [applications]);
 
     
     return (
@@ -28,7 +28,7 @@ function Applications({ job }) {
                 :
                 applications &&
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 place-items-center mx-auto pt-5">
-                    {applications.map(item =>
+                    {applications?.map(item =>
                         <div key={item._id} className='p-5 border m-1 rounded-sm'>
                             <h2 className="text-lg font-medium">{item.userId.name}</h2>
                             <p className="text-sm text-gray-600">{item.userId.profession}</p>
