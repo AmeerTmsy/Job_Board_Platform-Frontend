@@ -1,46 +1,43 @@
 import React from 'react';
-import { candidates } from '@/fakeUtilities/myUtils';
+// import { candidates } from '@/fakeUtilities/myUtils';
 import { useParams } from 'react-router-dom';
-
-// export async function loader(params) {
-//     const employee = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/${id}`, { withCredentials: true })
-//         .then(response => response?.data?.data)
-//         .catch(error => console.log(error, "|| Unable to fetch the jobs"))
-//     return { employee };
-// }
+import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
+import { SkeletonCard } from '@/myComponents/SkeletonCard';
 
 function Employee(props) {
-    // const { employee } = useLoaderData()
-    const params = useParams()
-    const [candidate] = candidates.filter(candidate => candidate._id === params.id)
-    console.log(candidate)
+    const { id } = useParams()
+    const [user, loading, error] = useFetchDataDetail(`users/${id}`);
+    // const [candidate] = candidates.filter(candidate => candidate._id === '670907c9ce39fb27cac51ddb')
+    // console.log("user:", user)
+    // console.log("loading:", loading)
 
 
     return (
         <div className="flex flex-col w-full h-full p-6">
-            {/* Employee Information Heading */}
             <h1 className="text-2xl font-semibold text-center mb-6">Employee Information</h1>
 
-            {/* Employee Profile */}
-            <div className="flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12">
-                {/* Left side - Profile image, name, and contact info */}
-                <div className="flex flex-col items-center w-1/2">
-                    <img
-                        src={candidate.profileImage}
-                        alt={candidate.name}
-                        className="w-52 h-52 rounded-full "
-                    />
-                    <h2 className="text-lg font-medium mb-4">{candidate.name}</h2>
-                    <p className="text-sm text-gray-600">{candidate.email}</p>
-                    <p className="text-sm text-gray-600">{candidate.experienced} year experience</p>
+            {loading !== false ?
+                <div className="flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12">
+                    <SkeletonCard />
                 </div>
-
-                {/* Right side - Role and description */}
-                <div className="flex flex-col items-center text-center md:text-left  w-1/2 border p-4 rounded-sm">
-                    <h3 className="text-lg font-semibold mb-2">{candidate.profession}</h3>
-                    <p className="text-sm text-gray-700">{candidate.bio}</p>
+                :
+                <div className="flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12">
+                    <div className="flex flex-col items-center w-1/2">
+                        <img
+                            src={user.profileImage}
+                            alt={user.name}
+                            className="w-52 h-52 rounded-full "
+                        />
+                        <h2 className="text-lg font-medium mb-4">{user.name}</h2>
+                        <p className="text-sm text-gray-600">{user.email}</p>
+                        <p className="text-sm text-gray-600">{user.experienced} year experience</p>
+                    </div>
+                    <div className="flex flex-col items-center text-center md:text-left  w-1/2 border p-4 rounded-sm">
+                        <h3 className="text-lg font-semibold mb-2">{user.profession}</h3>
+                        <p className="text-sm text-gray-700">{user.bio}</p>
+                    </div>
                 </div>
-            </div>
+            }
         </div>
     );
 }

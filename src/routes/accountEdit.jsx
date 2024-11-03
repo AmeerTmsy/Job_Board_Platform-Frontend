@@ -1,167 +1,184 @@
+import { Toaster } from '@/components/ui/toaster';
+import { toast } from '@/hooks/use-toast';
+import { SkeletonCard } from '@/myComponents/SkeletonCard';
+import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
+import { authenticatUser } from '@/redux/slices/userSlice';
 import axios from 'axios';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function AccountEdit(props) {
-    const { isLoggedIn, user } = useSelector(state => state.user);
+    const { user, isLoggedIn } = useSelector(state => state.user);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const myUserType = user.userType;
+    let [myAccountData, loading, error] = useFetchDataDetail(myUserType === 'employee' ? `users/${user.id}` : `employers/${user.id}`);
+    // console.log("myAccountData:", myAccountData);
+    // console.log("user:", user);
 
     const { register, handleSubmit, setValue } = useForm();
     const [isEditing, setIsEditing] = useState({
         name: false, email: false, profession: false, experienced: false, bio: false,
     });
-    // Initial form data
-    const [formData, setFormData] = useState({
-        name: 'Peter Parker',
-        email: 'lukebelmar@gmail.com',
-        profession: 'Product Manager',
-        experienced: 2,
-        bio: `Peter Parker, Product Manager at Asasar, brings a strong vision and leadership to the team. He has a talent for aligning product development with customer needs, ensuring timely delivery while maximizing innovation. Peter's approach balances creativity with strategic planning, making him instrumental in driving the success of projects and helping the company grow.`,
-        profileImage: "https://thumbs.dreamstime.com/b/user-profile-vector-flat-illustration-avatar-person-icon-gender-neutral-silhouette-profile-picture-user-profile-vector-flat-304778094.jpg",
-    });
-    // Handle the form submission
-    const onSubmit = (data) => {
-        const updatedData = { ...formData, ...data };
-        setFormData(updatedData);
-        console.log('Entire Updated Data: ', updatedData);
 
-        setIsEditing({
-            name: false, email: false, profession: false, experienced: false, bio: false,
-        });
-    };
-
-    // handle image upload
-    const uploadImage = async (file) => {
+    const handleFormSubmit = async (data) => {
         const formData = new FormData();
-        formData.append('profileImage', file);
-        
-        // console.log("file",file);
-        // console.log("formData", formData);
+        const updatedData = { ...myAccountData, ...data };
 
-        try {
-            const response = await axios.patch(`http://localhost:3000/users/${user.id}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data', },
-                withCredentials: true,
-            });
-            setFormData((prevData) => ({
-                ...prevData,
-                profileImage: response?.data?.data?.profileImage,
-            }));
-            // console.log('Image uploaded and user updated successfully:', response.data.data.profileImage);
-        } catch (error) {
-            console.error('Error uploading image:', error);
+        formData.append('name', updatedData.name);
+        formData.append('email', updatedData.email);
+        formData.append('profession', updatedData.profession);
+        formData.append('experienced', updatedData.experienced);
+        formData.append('bio', updatedData.bio);
+        console.log(formData);
+
+
+        if (data.profileImage?.[0]) {
+            formData.append('profileImage', data.profileImage[0]);
         }
 
-        setIsEditing((prev) => ({ ...prev, profileImage: false }));
+        const url = `${import.meta.env.VITE_API_BASE_URL}/${myUserType === 'employee' ? 'users' : 'employers'}/${user.id}`;
+        try {
+            await axios.patch(url, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                withCredentials: true,
+            }).then((response) => {
+                console.log(response?.data);
+                dispatch(authenticatUser(response?.data?.data));
+                toast({
+                    description: "Changes saved, reload page",
+                    style: { backgroundColor: '#90ee90', color: 'black' },
+                });
+            });
+        } catch (error) {
+            console.error(error);
+            toast({
+                description: "Unable to save update, please reload the page",
+                style: { backgroundColor: '#ff5151', color: 'black' },
+            });
+        }
+        setIsEditing({
+            name: false, email: false, profession: false, experienced: false, bio: false, profileImage: false,
+        });
+        setTimeout(() => {
+            // window.location.reload();
+            navigate(`/${user.userType}/account`)
+        }, 1200);
     };
 
-    // Handle enabling editing
     const enableEdit = (field) => {
         setIsEditing({ ...isEditing, [field]: true });
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-3xl mx-auto p-6 pt-10 bg-white shadow-xl border-t rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4 text-center">Click the Fields to Edit</h2>
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="max-w-3xl mx-auto p-6 pt-10 mt-10 bg-white shadow-xl border-t rounded-lg" >
+            <Toaster />
+            {
+                loading ?
+                    <div className='flex flex-col items-center'>
+                        < h2 className="text-2xl font-semibold mb-4 text-center" > Edit Fields Are Loading</h2>
+                        <SkeletonCard />
+                    </div >
+                    :
+                    <div>
+                        <h2 className="text-2xl font-semibold mb-4 text-center">Click the Fields to Edit</h2>
 
-            <div className="flex items-start justify-between space-x-8">
-                {/* Left Side: Profile Information */}
-                <div className="w-1/3">
-                    {/* Profile Picture Placeholder */}
-                    {isEditing.profileImage ? (
-                        <>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => uploadImage(e.target.files[0])}
-                                className="block w-full mt-2 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                            />
-                        </>
-                    ) : (
-                        <img
-                            src={formData.profileImage}
-                            alt="User profile"
-                            className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                            onClick={() => enableEdit('profileImage')}
-                        />
-                    )}
+                        <div className="flex items-start justify-between space-x-8">
+                            <div className="w-1/3">
+                                {isEditing.profileImage ? (
+                                    <>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            // onChange={(e) => uploadImage(e.target.files[0])}
+                                            {...register("profileImage")}  // Register it as 'profileImage' in react-hook-form
+                                            className="block w-full mt-2 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
+                                        />
 
-                    {/* Name */}
-                    {isEditing.name ? (
-                        <input
-                            {...register('name')}
-                            defaultValue={formData.name}
-                            className="block w-full px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                        />
-                    ) : (
-                        <p className="text-center font-semibold" onClick={() => enableEdit('name')}>
-                            {formData.name}
-                        </p>
-                    )}
+                                    </>
+                                ) : (
+                                    <img
+                                        src={myAccountData.profileImage}
+                                        alt="User profile"
+                                        className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                                        onClick={() => enableEdit('profileImage')}
+                                    />
+                                )}
 
-                    {/* Email */}
-                    {isEditing.email ? (
-                        <input
-                            {...register('email')}
-                            defaultValue={formData.email}
-                            className="block w-full mt-2 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                        />
-                    ) : (
-                        <p className="text-center text-gray-500" onClick={() => enableEdit('email')}>
-                            {formData.email}
-                        </p>
-                    )}
+                                {isEditing.name ? (
+                                    <input
+                                        {...register('name')}
+                                        defaultValue={myAccountData.name}
+                                        className="block w-full px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
+                                    />
+                                ) : (
+                                    <p className="text-center font-semibold" onClick={() => enableEdit('name')}>
+                                        {myAccountData.name}
+                                    </p>
+                                )}
 
-                    {/* Experience */}
-                    {isEditing.experienced ? (
-                        <input
-                            {...register('experienced')}
-                            defaultValue={formData.experienced}
-                            className="block w-full mt-2 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                        />
-                    ) : (
-                        <p className="text-center text-gray-500 mt-2" onClick={() => enableEdit('experienced')}>
-                            {formData.experienced} year experienced
-                        </p>
-                    )}
-                </div>
+                                {isEditing.email ? (
+                                    <input
+                                        {...register('email')}
+                                        defaultValue={myAccountData.email}
+                                        className="block w-full mt-2 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
+                                    />
+                                ) : (
+                                    <p className="text-center text-gray-500" onClick={() => enableEdit('email')}>
+                                        {myAccountData.email}
+                                    </p>
+                                )}
 
-                {/* Right Side: Role Description */}
-                <div className="w-2/3">
-                    {/* <h3 className="font-semibold mb-2">Product Manager</h3> */}
-                    {isEditing.profession ? (
-                        <input
-                            {...register('profession')}
-                            defaultValue={formData.profession}
-                            className="block mb-3 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                        />
-                    ) : (
-                        <h3 className="font-semibold mb-2 " onClick={() => enableEdit('profession')}>{formData.profession}</h3>
+                                {isEditing.experienced ? (
+                                    <input
+                                        {...register('experienced')}
+                                        defaultValue={myAccountData.experienced}
+                                        className="block w-full mt-2 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
+                                    />
+                                ) : (
+                                    <p className="text-center text-gray-500 mt-2" onClick={() => enableEdit('experienced')}>
+                                        {myAccountData.experienced} year experienced
+                                    </p>
+                                )}
+                            </div>
 
-                    )}
-                    {isEditing.bio ? (
-                        <textarea
-                            {...register('bio')}
-                            defaultValue={formData.bio}
-                            className="block w-full h-48 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                        />
-                    ) : (
-                        <p className="text-gray-600" onClick={() => enableEdit('bio')}>
-                            {formData.bio}
-                        </p>
-                    )}
+                            <div className="w-2/3">
+                                {isEditing.profession ? (
+                                    <input
+                                        {...register('profession')}
+                                        defaultValue={myAccountData.profession}
+                                        className="block mb-3 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
+                                    />
+                                ) : (
+                                    <h3 className="font-semibold mb-2 " onClick={() => enableEdit('profession')}>{myAccountData.profession}</h3>
 
-                    {/* Update Button */}
-                    <button
-                        type="submit"
-                        className="w-full mt-4 bg-blue-400 text-white py-2 rounded-md hover:bg-blue-500 transition duration-200"
-                    >
-                        Update Changes
-                    </button>
-                </div>
-            </div>
-        </form>
+                                )}
+                                {isEditing.bio ? (
+                                    <textarea
+                                        {...register('bio')}
+                                        defaultValue={myAccountData.bio}
+                                        className="block w-full h-48 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
+                                    />
+                                ) : (
+                                    <p className="text-gray-600" onClick={() => enableEdit('bio')}>
+                                        {myAccountData.bio}
+                                    </p>
+                                )}
+
+                                <button
+                                    type="submit"
+                                    className="w-full mt-4 bg-blue-400 text-white py-2 rounded-md hover:bg-blue-500 transition duration-200"
+                                >
+                                    Update Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+            }
+        </form >
     );
 }
 

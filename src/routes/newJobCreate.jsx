@@ -3,12 +3,50 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { companyNames } from '@/fakeUtilities/myUtils';
+import { useSelector } from 'react-redux';
+import { useFetchList } from '@/myHooks/fetchList';
+import axios from 'axios';
+import { toast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 function NewJobCreate() {
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const { user, isLoaggedIn } = useSelector(state => state.user)
+    const [companies, loading, error] = useFetchList(`companies?createdBy=${user.id}`)
+    const navigate = useNavigate();
 
-    const onSubmit = (data) => {
-        console.log(data);
+    if (!loading) {
+        console.log(companies);
+
+    }
+    const onSubmit = async (data) => {
+        data = { ...data, jobCreatedBy: user.id }
+        // console.log(data);
+        await axios.post(`${import.meta.env.VITE_API_BASE_URL}/jobs`, data, { withCredentials: true })
+            .then(response => {
+                console.log(response?.data?.data)
+                console.log(response?.data?.data?._id)
+                toast({
+                    description: "Job created successfull",
+                    style: {
+                        backgroundColor: '#90ee90',
+                        color: 'black'
+                    }
+                })
+                setTimeout(() => {
+                    navigate(`/employer/employer_job_detail/${response?.data?.data?._id}`);
+                }, 1500);
+            })
+            .catch(error => {
+                console.log(error?.response?.data?.message)
+                toast({
+                    description: error?.response?.data?.message,
+                    style: {
+                        backgroundColor: '#ff5151',
+                        color: 'black'
+                    }
+                })
+            })
     };
 
     return (
@@ -27,18 +65,33 @@ function NewJobCreate() {
                             />
                             {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
                         </div>
-                        <div>
-                            <select
-                                {...register("company", { required: "Company selection is required" })}
-                                className="border p-2 rounded w-full"
-                            >
-                                <option value="">Company</option>
-                                {companyNames.map((company) => (
-                                    <option key={company.id} value={company.name}>{company.name}</option>
-                                ))}
-                            </select>
-                            {errors.company && <p className="text-red-500 text-sm">{errors.company.message}</p>}
-                        </div>
+                        {loading ?
+                            <div>
+                                <select
+                                    {...register("company", { required: "Company selection is required" })}
+                                    className="border p-2 rounded w-full"
+                                >
+                                    <option value="">Company</option>
+                                    {companyNames.map((company) => (
+                                        <option key={company.id} value={company.name}>{company.name}</option>
+                                    ))}
+                                </select>
+                                {errors.company && <p className="text-red-500 text-sm">{errors.company.message}</p>}
+                            </div>
+                            :
+                            <div>
+                                <select
+                                    {...register("company", { required: "Company selection is required" })}
+                                    className="border p-2 rounded w-full"
+                                >
+                                    <option value="">Company</option>
+                                    {companies.map((company) => (
+                                        <option key={company.id} value={company._id}>{company.name}</option>
+                                    ))}
+                                </select>
+                                {errors.company && <p className="text-red-500 text-sm">{errors.company.message}</p>}
+                            </div>
+                        }
                     </div>
 
                     {/* Headline */}
@@ -84,6 +137,7 @@ function NewJobCreate() {
                                 placeholder="Salary"
                                 {...register("salary", { required: "Salary is required", min: { value: 0, message: "Salary must be a positive number" } })}
                                 className="border p-2 rounded w-full"
+                                defaultValue={0}
                             />
                             {errors.salary && <p className="text-red-500 text-sm">{errors.salary.message}</p>}
                         </div>

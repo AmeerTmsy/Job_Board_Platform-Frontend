@@ -46,7 +46,7 @@ function LoginForm(props) {
                 }
             })
             setTimeout(() => {
-                // navigate('/jobs');
+                navigate('/');
             }, 1500);
         } catch (error) {
             dispatch(unAuthenticatUser())

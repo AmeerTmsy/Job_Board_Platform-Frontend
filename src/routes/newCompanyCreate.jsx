@@ -1,15 +1,44 @@
+import { toast } from '@/hooks/use-toast';
+import axios from 'axios';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function NewCompanyCreate() {
     const {isLoggedIn, user} = useSelector(state => state.user);
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const navigate = useNavigate();
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         data = { ...data, createdBy: user.id }
-        console.log(data);
-        // handle form submission here
+        // console.log(data);
+
+        await axios.post(`${import.meta.env.VITE_API_BASE_URL}/companies`, data, { withCredentials: true })
+            .then(response => {
+                console.log(response?.data?.data)
+                console.log(response?.data?.data?._id)
+                toast({
+                    description: "Job created successfull",
+                    style: {
+                        backgroundColor: '#90ee90',
+                        color: 'black'
+                    }
+                })
+                setTimeout(() => {
+                    navigate(`/employer/companies/${response?.data?.data?._id}`);
+                }, 1500);
+            })
+            .catch(error => {
+                console.log(error?.response?.data?.message)
+                toast({
+                    description: error?.response?.data?.message,
+                    style: {
+                        backgroundColor: '#ff5151',
+                        color: 'black'
+                    }
+                })
+            })
     };
 
     return (
@@ -51,7 +80,7 @@ function NewCompanyCreate() {
                     <div className="mb-4">
                         <label className="block mb-1 font-semibold">Website</label>
                         <input
-                            type="url"
+                            type="text"
                             {...register("website", { required: "Website is required", pattern: { value: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/, message: "Invalid URL" } })}
                             className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />

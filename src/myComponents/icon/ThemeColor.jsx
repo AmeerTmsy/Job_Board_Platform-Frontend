@@ -21,7 +21,7 @@ function ThemeColor() {
   }, [theme, resolvedTheme]);
 
   // Determine button styles based on the current theme
-  const buttonStyles = currentTheme === "dark" ? "bg-black !text-white" : "!bg-white text-black";
+  const buttonStyles = currentTheme === "dark" ? "bg-black !text-white !border-white " : "!bg-white text-black";
 
   return (
     <DropdownMenu>
@@ -29,7 +29,7 @@ function ThemeColor() {
         <Button
           variant="outline"
           size="icon"
-          className={`${buttonStyles} border transition-colors duration-300 rounded-full focus:border-none`}
+          className={`${buttonStyles} border transition-colors duration-300 rounded-full focus:border-none !w-5 !h-5 mt-1 mr-1`}
         >
           {currentTheme !== "dark" ? (
             <Sun className="h-[1.2rem] w-[1.2rem] transition-all text-black" />

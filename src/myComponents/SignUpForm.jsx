@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form";
 import { Link } from 'react-router-dom';
 import ErrorMessage from './SignUpErrorMessage';
 import { useTheme } from 'next-themes';
+import axios from 'axios';
+import { toast } from '@/hooks/use-toast';
+import { Toaster } from '@/components/ui/toaster';
 
 function SignUpForm(props) {
     const { theme, setTheme } = useTheme();
@@ -15,19 +18,74 @@ function SignUpForm(props) {
 
     const password = watch('password');
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         delete data.confirmPassword;
         console.log(data);
+        if (data.userType === "employer") {
+            console.log("userType", data.userType);
+            await axios.post(`${import.meta.env.VITE_API_BASE_URL}/employers`, data, { withCredentials: true })
+                .then(response => {
+                    console.log(response?.data?.data)
+                    toast({
+                        description: "Sign up successfull",
+                        style: {
+                            backgroundColor: '#90ee90',
+                            color: 'black'
+                        }
+                    })
+                    setTimeout(() => {
+                        navigate('/');
+                    }, 1500);
+                })
+                .catch(error => {
+                    console.log(error?.response?.data?.message)
+                    toast({
+                        description: error?.response?.data?.message,
+                        style: {
+                            backgroundColor: '#ff5151',
+                            color: 'black'
+                        }
+                    })
+                })
+
+        } else {
+            console.log("userType", data.userType);
+            await axios.post(`${import.meta.env.VITE_API_BASE_URL}/users`, data, { withCredentials: true })
+                .then(response => {
+                    console.log(response?.data?.data)
+                    toast({
+                        description: "Sign up successfull",
+                        style: {
+                            backgroundColor: '#90ee90',
+                            color: 'black'
+                        }
+                    })
+                    setTimeout(() => {
+                        navigate('/jobs');
+                    }, 1500);
+                })
+                .catch(error => {
+                    console.log(error?.response?.data?.message)
+                    toast({
+                        description: error?.response?.data?.message,
+                        style: {
+                            backgroundColor: '#ff5151',
+                            color: 'black'
+                        }
+                    })
+                })
+        }
     }
 
     return (
         <div className='px-3'>
+            <Toaster />
             <form onSubmit={handleSubmit(onSubmit)} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
 
                 <div className="mb-4">
                     <input
                         {...register("name", { required: true })}
-                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ? 'text-white' : ''}`}
                         type="text"
                         placeholder="Name"
                     />
@@ -37,14 +95,14 @@ function SignUpForm(props) {
                 <div className="mb-4 grid grid-cols-2 gap-4">
                     <input
                         {...register("profession", { required: true })}
-                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ? 'text-white' : ''}`}
                         type="text"
                         placeholder="Your Profession"
                     />
                     <input
                         {...register("experienced", { required: true })}
-                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
-                        type="text"
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ? 'text-white' : ''}`}
+                        type="number"
                         placeholder="Years of experience"
                     />
                     <ErrorMessage error={errors.profession} fieldName="profession" />
@@ -54,7 +112,7 @@ function SignUpForm(props) {
                 <div className="mb-4">
                     <textarea
                         {...register("bio", { required: true })}
-                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ? 'text-white' : ''}`}
                         placeholder="Bio"
                     />
                     <ErrorMessage error={errors.bio} fieldName="bio" />
@@ -63,7 +121,7 @@ function SignUpForm(props) {
                 <div className="mb-4">
                     <input
                         {...register("email", { required: true, pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ })}
-                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ? 'text-white' : ''}`}
                         type="email"
                         placeholder="Email"
                     />
@@ -79,7 +137,7 @@ function SignUpForm(props) {
                                 message: "Password must be at least 8 characters, with at least one uppercase letter, one lowercase letter, and one number"
                             }
                         })}
-                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ?'text-white' :''}`}
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${theme === 'dark' ? 'text-white' : ''}`}
                         type="password"
                         placeholder="Password"
                     />
@@ -88,7 +146,7 @@ function SignUpForm(props) {
                             required: true,
                             validate: value => value === password || "Passwords do not match"
                         })}
-                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${theme === 'dark' ?'text-white' :''}`}
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${theme === 'dark' ? 'text-white' : ''}`}
                         type="password"
                         placeholder="Confirm password"
                     />

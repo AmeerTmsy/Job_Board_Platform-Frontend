@@ -1,18 +1,25 @@
-import { jobs } from "../fakeUtilities/myUtils"
+import { useFetchList } from "@/myHooks/fetchList";
+// import { jobs } from "../fakeUtilities/myUtils"
 import JobCard from '../myComponents/JobCard';
-import { useLoaderData } from 'react-router-dom';
-import axios from 'axios';
-
-// export async function loader() {
-//     const jobs = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/jobs`, { withCredentials: true })
-//     .then( response => response = response?.data?.data)
-//     .catch (error => console.log(error, "|| Unable to fetch the jobs"))
-//     return { jobs };
-// }
+import { useEffect, useState } from "react";
+import { SkeletonCard } from "@/myComponents/SkeletonCard";
+// import { useLoaderData } from 'react-router-dom';
+// import axios from 'axios';
 
 function SavedJobs(props) {
-    // const {jobs} = useLoaderData();
-    console.log(jobs)
+    const [savedJobs, loading, error] = useFetchList("saveJob");
+    const [jobs, setJobs] = useState([]);
+    const [jobsCount, setJobsCount] = useState([]);
+
+    useEffect(() => {
+        if (!loading && savedJobs) {
+            setJobs(savedJobs || []);
+            setJobsCount(savedJobs.totalJobSaved || 0);
+
+            jobs.map(job => console.log("job:", job.jobId))
+            console.log("jobsCount:", jobsCount);
+        }
+    }, [loading, savedJobs]);
 
 
     return (
@@ -25,11 +32,17 @@ function SavedJobs(props) {
                     <input className='bg-slate-100 text-black' type="text" name="search" id="search" placeholder='search' />
                     <div className=' border-l-2 custom-input'><i className="ri-search-line px-2 focus:outline-slate-100 text-black"></i></div>
                 </div>
-                
+
             </div>
-            <div className='flex flex-col justify-center items-center gap-1 flex-wrap'>
-                {jobs.map(item => (<JobCard key={item._id} job={item} />))}
-            </div>
+            {loading ?
+                <div className='flex flex-col justify-center items-center gap-1 flex-wrap'>
+                    <SkeletonCard />
+                </div>
+                :
+                <div className='flex flex-col justify-center items-center gap-1 flex-wrap'>
+                    {jobs.map(job => (<JobCard key={job.jobId._id} job={job.jobId} />))}
+                </div>
+            }
         </main>
     );
 }

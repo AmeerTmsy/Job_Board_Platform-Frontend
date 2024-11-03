@@ -9,12 +9,12 @@ import {
 import { ThemeProvider } from 'next-themes';
 import { Provider } from 'react-redux';
 
-import Root from "./routes/root";
+import Root, { loader as rootLoader } from "./routes/root";
 import ErrorPage from "./error-page";
-import Jobs, { loader as jobsLoader } from "./routes/jobs";
+import Jobs from "./routes/jobs";
 import Login from "./routes/login";
 import Job from './routes/job';
-import Employees, { loader as employeesLoader } from './routes/employees';
+import Employees from './routes/employees';
 import Employee from './routes/employee';
 import Account from './routes/account';
 import AccountEdit from './routes/accountEdit';
@@ -33,17 +33,18 @@ import Companies from './routes/companies';
 import VerifiedEmployer from './verified/VerifiedEmployer';
 import VerifiedAdmin from './verified/VerifiedAdmin';
 import EmployerJobEdit from './routes/employerJobEdit';
+import { Toaster } from './components/ui/toaster';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    loader: rootLoader,
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "/jobs",
+        path: "/",
         element: <Jobs />,
-        loader: jobsLoader,
       },
       {
         path: "/login",
@@ -58,7 +59,7 @@ const router = createBrowserRouter([
         element: <Job />,
       },
       {
-        path: "/user",
+        path: "/employee",
         element: <VerifiedUser />,
         children: [
           {
@@ -96,9 +97,16 @@ const router = createBrowserRouter([
             element: <AccountEdit />,
           },
           {
+            path: "companies",
+            element: <Companies />,
+          },
+          {
+            path: "companies/:id",
+            element: <Company />,
+          },
+          {
             path: "employees",
             element: <Employees />,
-            loader: employeesLoader,
           },
           {
             path: "employees/:id",
@@ -121,20 +129,12 @@ const router = createBrowserRouter([
             element: <NewJobCreate />,
           },
           {
-            path: "company_Create",
+            path: "company_create",
             element: <NewCompanyCreate />,
-          },
-          {
-            path: "companies",
-            element: <Companies />,
           },
           {
             path: "my_companies",
             element: <MyCompanies />,
-          },
-          {
-            path: "companies/:id",
-            element: <Company />,
           },
           {
             path: "edit_company/:id",
@@ -142,21 +142,24 @@ const router = createBrowserRouter([
           },
         ]
       },
-      {
+      {/*//////////////////////////*/
         path: "/admin",
         element: <VerifiedAdmin />,
         children: [
           {
-            path: "jobs",
-            element: <Jobs />,
-            loader: jobsLoader
+            path: "companies",
+            element: <Companies />/*<<<<<*/
           },
           {
-            path: "companies",
-            element: <Companies />
+            path: "companies/:id",
+            element: <Company />/*<<<<<*/
+          },
+          {
+            path: "account",
+            element: <Account />,
           },
         ]
-      },
+      },/*//////////////////////////*/
     ],
   },
 ]);
@@ -166,6 +169,7 @@ createRoot(document.getElementById('root')).render(
     <ThemeProvider attribute="class" defaultTheme="system">
       <Provider store={store}>
         <RouterProvider router={router} />
+        <Toaster />
       </Provider>
     </ThemeProvider>
   </StrictMode>,

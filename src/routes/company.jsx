@@ -1,49 +1,125 @@
-import React from 'react';
-import { companies } from '@/fakeUtilities/myUtils';
-import { Link, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+// import { companiez } from '@/fakeUtilities/myUtils';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
+import { SkeletonCard } from '@/myComponents/SkeletonCard';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { toast } from '@/hooks/use-toast';
 
-// export async function loader(params) {
-//     const company = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/${id}`, { withCredentials: true })
-//         .then(response => response?.data?.data)
-//         .catch(error => console.log(error, "|| Unable to fetch the jobs"))
-//     return { company };
-// }
 function Company(props) {
-    // const { company } = useLoaderData()
-    const userType = 'employer';
-    const params = useParams()
-    const [company] = companies.filter(company => company._id === params.id)
-    console.log(company.createdBy)
+    const { user, isLoggedIn } = useSelector(state => state.user);
+    const { employerCompanies } = useSelector(state => state.employerCompanies);
+    const { id } = useParams()
+    const [company, loading, error] = useFetchDataDetail(`companies/${id}`);
+    const [badgColor, setBadgColor] = useState('');
+    const [myCompany, setMyCompany] = useState(false);
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!loading) {
+            if (company.verifiedCompany == 'approved') setBadgColor('bg-green-200 text-green-700')
+            if (company.verifiedCompany == 'rejected') setBadgColor('bg-red-200 text-red-600')
+            if (company.verifiedCompany == 'pending') setBadgColor('bg-yellow-200 text-yellow-700')
+        }
+    }, [company, loading]);
+
+    useEffect(() => {
+        company && setMyCompany(employerCompanies.some(item => item._id === company._id))
+    }, [employerCompanies, company])
+
+    const companyVerification = async (verification) => {
+        if (verification === 'approve') {
+            console.log(verification);
+            try {
+                const url = `http://localhost:3000/companies/${company._id}`;
+                const response = await axios.patch(url, { verifiedCompany: 'approved' }, { withCredentials: true });
+                console.log("Company updated:", response);
+                toast({
+                    description: `${response?.data?.data?.name} has approved to publish`,
+                    style: { backgroundColor: '#90ee90', color: 'black' },
+                });
+                setTimeout(() => {
+                    window.location.reload()
+                    // console.log("response?.data?.data?._id", response?.data?.data?._id)
+                    // console.log('user.userType', user.userType)
+                }, 1200);
+            } catch (error) {
+                console.error("Error approving company:", error);
+                toast({
+                    description: "Unable to approve, please try again in a while",
+                    style: { backgroundColor: '#ff5151', color: 'black' },
+                });
+            }
+        }
+        else if (verification === 'regect') {
+            console.log(verification);
+            try {
+                const url = `http://localhost:3000/companies/${company._id}`;
+                const response = await axios.patch(url, { verifiedCompany: 'rejected' }, { withCredentials: true });
+                console.log("Company updated:", response);
+                toast({
+                    description: `${response?.data?.data?.name} has regected to publish`,
+                    style: { backgroundColor: '#90ee90', color: 'black' },
+                });
+                setTimeout(() => {
+                    window.location.reload()
+                    // console.log("response?.data?.data?._id", response?.data?.data?._id)
+                    // console.log('user.userType', user.userType)
+                }, 1200);
+            } catch (error) {
+                console.error("Error regecting company:", error);
+                toast({
+                    description: "Unable to regect, please try again in a while",
+                    style: { backgroundColor: '#ff5151', color: 'black' },
+                });
+            }
+        }
+    }
 
     return (
         <div className="flex flex-col w-full h-full p-6">
-            {/* Employee Information Heading */}
-            <h1 className="text-2xl font-semibold text-center mb-6">{company.name}</h1>
-
-            {/* Employee Profile */}
-            <div className="flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12">
-                {/* Left side - Profile image, name, and contact info */}
-                <div className="flex flex-col items-center w-1/2">
-                    <img
-                        src={company.logo}
-                        alt={company.name}
-                        className="w-52 h-52 rounded-full"
-                    />
-                    <h2 className="text-lg font-medium mb-4">{company.name}</h2>
-                    <p className="text-sm text-gray-600">{company.industry}</p>
-                    <p className="text-sm text-gray-600">{company.location}</p>
+            {loading !== false ?
+                <div className="flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12">
+                    <SkeletonCard />
                 </div>
-
-                {/* Right side - Role and description */}
-                <div className="flex flex-col items-center text-center md:text-left  w-1/2 border p-4 rounded-sm">
-                    {/* <h3 className="text-lg font-semibold mb-2">{company.role}</h3> */}
-                    <p className="text-sm text-gray-700 pb-2 ">{company.description}</p>
-                    <p className="text-sm text-gray-700 underline self-start">{company.website}</p>
-                    {
-                        userType === "employer" && <Link to={`/employer/edit_company/${company._id}`} className='self-start bg-blue-600 border mt-2 px-7 py-1 rounded' >edit</Link>
-                    }
+                :
+                <div className=''>
+                    <h1 className="text-2xl font-semibold text-center mb-6">{company.name}</h1>
+                    <div className="relative flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12">
+                        {user.userType === 'admin' && <span className={`absolute top-4 right-0 ${badgColor} text-xs font-semibold px-5 py-2 rounded-l`}>
+                            {company.verifiedCompany}
+                        </span>}
+                        {user.userType === 'employer' && myCompany && <span className={`absolute top-2 right-0 bg-gray-700 text-white text-xs font-semibold px-5 py-2 rounded-l`}>
+                            {'Your Job'}
+                        </span>}
+                        <div className="flex flex-col items-center w-1/2">
+                            <img
+                                src={company.logo}
+                                alt={company.name}
+                                className="w-52 h-52 rounded-full object-cover"
+                            />
+                            <h2 className="text-lg font-medium mb-4">{company.name}</h2>
+                            <p className="text-sm text-gray-600">{company.industry}</p>
+                            <p className="text-sm text-gray-600">{company.location}</p>
+                        </div>
+                        <div className='flex flex-col justify-center items-center gap-5'>
+                            <div className="flex flex-col items-center text-center md:text-left  w-full border p-4 rounded-sm ">
+                                <p className="text-sm text-gray-700 pb-2 ">{company.description}</p>
+                                <p className="text-sm text-gray-700 underline self-start">{company.website}</p>
+                                {
+                                    user.userType === "employer" && myCompany && <Link to={`/employer/edit_company/${company._id}`} className='self-start bg-blue-600 border mt-2 px-7 py-1 rounded' >edit</Link>
+                                }
+                            </div>
+                            {user.userType === 'admin' &&
+                                <div className='flex flex-row gap-3'>
+                                    <button onClick={() => companyVerification("approve")} className="bg-green-200 w-20  hover:shadow-md rounded-l-full text-green-800 focus:shadow-inner border border-r-4 border-gray-800">approved</button>
+                                    <button onClick={() => companyVerification("regect")} className="bg-red-200 w-20 hover:shadow-md rounded-r-full text-red-600 focus:shadow-inner border border-l-4 border-gray-800">regected</button>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
-            </div>
+            }
         </div>
     );
 }

@@ -1,18 +1,20 @@
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router-dom';
 
 function VerifiedUser(props) {
     const navigate = useNavigate()
-    const verify = true
+    const { user, isLoggedIn } = useSelector(state => state.user);
 
     useEffect(() => {
-        if(!verify)  navigate('/login')
-    }, [])
-    
+        if (!isLoggedIn) navigate('/login')
+        if (isLoggedIn && user.userType !== "employee") navigate('/')
+    }, [user, isLoggedIn]);
+
     return (
         <div>
             {
-                verify && <Outlet/>
+                isLoggedIn && (user.userType === 'employee') && <Outlet />
             }
         </div>
     );
