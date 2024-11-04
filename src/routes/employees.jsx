@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { candidates } from "../fakeUtilities/myUtils"
 import { useFetchList } from '@/myHooks/fetchList';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
+import SearchBar from '@/myComponents/searchBar';
 
 function Employees(props) {
     const [employees, loading, error] = useFetchList('users');
@@ -13,11 +14,10 @@ function Employees(props) {
 
     return (
         <div className="flex flex-col w-full h-full p-6">
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-semibold">Ready to work candidate</h1>
-                <div className='border-2 rounded-full px-2 py-1 pl-3 bg-slate-100 flex flex-row'>
-                    <input className='bg-slate-100' type="text" name="search" id="search" placeholder='search' />
-                    <div className=' border-l-2 custom-input'><i className="ri-search-line px-2 focus:outline-slate-100 text-black"></i></div>
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
+                <h1 className="text-2xl font-semibold p-3 sm:p-0">Ready to work candidate</h1>
+                <div>
+                    <SearchBar field='Employee' />
                 </div>
             </div>
             {loading === true ?

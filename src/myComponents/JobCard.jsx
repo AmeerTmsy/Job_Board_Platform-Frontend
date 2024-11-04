@@ -57,7 +57,7 @@ function JobCard({ job }) {
     };
 
     return (
-        <div className='relative m-2 py-4 sm:px-5 px-10 md:w-2/5 rounded-md ease-in-out duration-300 hover:shadow-md bg-lime-50 text-black'>
+        <div className='relative py-4 sm:px-5 px-10 w-[21rem] sm:w-1/2 rounded-md ease-in-out duration-300 hover:shadow-md bg-lime-50 text-black '>
             {/* Approved Label */}
             {user?.userType === 'admin' && (
                 <span className={`absolute top-3 right-0 ${badgColor} text-xs font-semibold px-2 py-1 rounded-l`}>

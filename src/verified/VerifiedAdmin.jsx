@@ -8,13 +8,13 @@ function VerifiedAdmin(props) {
 
     useEffect(() => {
         if(!isLoggedIn)  navigate('/login')
-        if(isLoggedIn && user.userType !== "admin")  navigate('/')
+        if(isLoggedIn && user?.userType !== "admin")  navigate('/')
     }, [user, isLoggedIn])
     
     return (
         <div>
             {
-                isLoggedIn && (user.userType === 'admin') && <Outlet/>
+                isLoggedIn && (user?.userType === 'admin') && <Outlet/>
             }
         </div>
     );

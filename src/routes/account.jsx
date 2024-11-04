@@ -26,7 +26,7 @@ function Account(props) {
                     style: { backgroundColor: '#90ee90', color: 'black' },
                 });
                 setTimeout(() => {
-                    // window.location.reload();
+                    window.location.reload();
                 }, 1200);
             })
             .catch(error => {

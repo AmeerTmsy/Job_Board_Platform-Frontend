@@ -5,6 +5,7 @@ import JobCard from '../myComponents/JobCard';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
 import { useFetchList } from '@/myHooks/fetchList';
 import { useSelector } from 'react-redux';
+import SearchBar from '@/myComponents/searchBar';
 
 
 function Jobs(props) {
@@ -24,21 +25,22 @@ function Jobs(props) {
             setUrlParam("");
         }
     }
-    
+
     const [jobs, loading, error] = useFetchList(`jobs${user?.userType === 'admin' ? urlParam : `?verifiedJob=approved`}`);
-    
+
     return (
         <>
-            <main>
-                <div className='flex flex-col sm:flex-row justify-between items-center p-4 '>
-                    <div>
-                        <h1 className='font-bold text-2xl'>Available Job listings</h1>
+            <main className='flex flex-col w-full h-full p-6'>
+                <div>
+                    <div className='flex flex-col sm:flex-row justify-between items-center mb-4'>
+                        <div>
+                            <h1 className='font-bold text-2xl  p-3 sm:p-0'>Available Job listings</h1>
+                        </div>
+                        <div>
+                            <SearchBar field='Job' />
+                        </div>
                     </div>
-                    <div className='border-2 rounded-full px-2 py-1 pl-3 bg-slate-100 flex flex-row'>
-                        <input className='bg-slate-100 text-black' type="text" name="search" id="search" placeholder='search' />
-                        <div className=' border-l-2 custom-input'><i className="ri-search-line px-2 focus:outline-slate-100 text-black"></i></div>
-                    </div>
-                    {user?.userType === 'admin' && <div>
+                    {user?.userType === 'admin' && <div className='flex flex-row justify-center md:justify-end py-5'>
                         <button onClick={() => bringData("all")} className="bg-gray-200 w-20 hover:shadow-md rounded-l text-black">all</button>
                         <button onClick={() => bringData("approved")} className="bg-green-200 w-20 hover:shadow-md text-green-700">approved</button>
                         <button onClick={() => bringData("pending")} className="bg-yellow-200 w-20 hover:shadow-md text-yellow-600">pending</button>

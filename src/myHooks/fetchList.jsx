@@ -16,7 +16,7 @@ export const useFetchList = (url) => {
             return;
         }
 
-        let isMounted = true; // Track if the component is mounted
+        // let isMounted = true;
 
         const fetchData = async () => {
             // console.log("url: ",url)
@@ -35,9 +35,9 @@ export const useFetchList = (url) => {
         }
         fetchData()
 
-        return () => {
-            isMounted = false; // Cleanup function to prevent state updates if unmounted
-        };
+        // return () => {
+        //     isMounted = false;
+        // };
 
     }, [url]);
 

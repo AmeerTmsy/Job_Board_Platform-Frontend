@@ -33,37 +33,11 @@ function Root(props) {
 
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        if (login) dispatch(authenticatUser(userData))
-    }, [login, userData, dispatch])
-
-
-
-    const { user, isLoggedIn } = useSelector(state => state.user);
-    // const { employerJobs } = useSelector(state => state.employerJobs);
-    // const { employerCompanies } = useSelector(state => state.employerCompanies);
-    // const { employeeSavedJobs } = useSelector(state => state.employeeSavedJobs);
-
-    // const jobUrl = user.userType === 'employee' ? 'saveJob' : user.userType === 'employer' ? `jobs?jobCreatedBy=${user.id}` : 'jobs';
-    // const companyUrl = user.userType === 'employer' ? `companies?createdBy=${user.id}` : '';
-
-    // const [jobs, jobsLoading, jobsError] = useFetchList(jobUrl || null);
-    // const [companies, companiesLoading, companiesError] = useFetchList(companyUrl || null);
-
     // useEffect(() => {
-    //     if (!jobsLoading && !jobsError && jobs) {
-    //         if (user.userType === 'employee') {
-    //             dispatch(setEmployeeSavedJobs(jobs));
-    //         } else if (user.userType === 'employer') {
-    //             dispatch(setEmployerJobs(jobs));
-    //         }
-    //     }
+        if (login) dispatch(authenticatUser(userData))
+    // }, [login, userData, dispatch])
 
-    //     if (user.userType === 'employer' && !companiesLoading && !companiesError) {
-    //         dispatch(setEmployerCompanies(companies));
-    //     }
-    // }, [jobs, companies, jobsLoading, jobsError, companiesLoading, companiesError, user.userType, dispatch]);
-
+    
     return (
         <div>
             <Header />
