@@ -16,7 +16,7 @@ function Account(props) {
     // console.log("myAccountData:", myAccountData);
     // console.log("loading:", loading);
 
-    const url = `${import.meta.env.VITE_API_BASE_URL}/${myUserType === 'employee' ? 'user/auth/logout' : 'employer/auth/logout'}`;
+    const url = `${import.meta.env.VITE_API_BASE_URL}/user/auth/logout`;
     const handlLogout = async () => {
         await axios.get(url, { withCredentials: true })
             .then(response => {
