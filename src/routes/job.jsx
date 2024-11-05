@@ -6,7 +6,6 @@ import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
 import { setEmployeeSavedJobs } from '@/redux/slices/employee/savedJobsSlice';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import Applications from './applications';
@@ -99,8 +98,6 @@ function Job(props) {
                 const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/saveJob/${job._id}`, { withCredentials: true });
                 dispatch(setEmployeeSavedJobs(response?.data?.data));
             }
-            // Debugging output
-            // console.log('Updated employeeSavedJobs:', employeeSavedJobs);
         } catch (error) {
             console.error("Error saving or deleting job:", error);
         }
@@ -108,11 +105,7 @@ function Job(props) {
 
     useEffect(() => {
         job && setMyJob(employerJobs.some(item => item._id === job._id))
-        // console.log(myJob)
     }, [employerJobs, job])
-
-    // console.log("job:", job)
-    // console.log("loading:", loading)
 
     return (
         <div className="max-w-4xl mx-auto mt-10">

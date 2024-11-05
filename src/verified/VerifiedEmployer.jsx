@@ -5,7 +5,6 @@ import { Outlet, useNavigate } from 'react-router-dom';
 function VerifiedEmployer(props) {
     const navigate = useNavigate()
     const { user, isLoggedIn } = useSelector(state => state.user);
-    // console.log(user)
 
     useEffect(() => {
         if (!isLoggedIn) navigate('/login')

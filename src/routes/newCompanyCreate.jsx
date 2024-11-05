@@ -6,13 +6,12 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 function NewCompanyCreate() {
-    const {isLoggedIn, user} = useSelector(state => state.user);
+    const { user } = useSelector(state => state.user);
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
 
     const onSubmit = async (data) => {
         data = { ...data, createdBy: user.id }
-        // console.log(data);
 
         await axios.post(`${import.meta.env.VITE_API_BASE_URL}/companies`, data, { withCredentials: true })
             .then(response => {

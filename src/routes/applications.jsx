@@ -1,20 +1,13 @@
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
 import { useFetchList } from '@/myHooks/fetchList';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 function Applications({ job }) {
-
-
     const { user } = useSelector(state => state.user);
     const [applications, applicationLoading, applicationError] = useFetchList(`applications?jobId=${job._id}`);
 
-    // useEffect(() => {
-    //     // console.log(applications)
-    // }, [applications]);
-
-    
     return (
         <div>
             {applicationLoading === true ?

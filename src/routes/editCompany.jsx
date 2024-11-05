@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { companyData } from '@/fakeUtilities/myUtils';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
@@ -11,7 +10,7 @@ import { toast } from '@/hooks/use-toast';
 function EditCompany(props) {
     const { register, handleSubmit, setValue } = useForm();
     const [editField, setEditField] = useState(null);
-    const { user, isLoggedIn } = useSelector(state => state.user);
+    const { user } = useSelector(state => state.user);
     const navigate = useNavigate();
     const { id } = useParams();
     let [myCompanyData, loading, error] = useFetchDataDetail(`companies/${id}`);
@@ -29,7 +28,6 @@ function EditCompany(props) {
         }
     }, [myCompanyData, setValue]);
 
-    // Submit handler
     const onSubmit = async (data) => {
         const formData = new FormData();
         formData.append("name", data.name);
@@ -39,7 +37,6 @@ function EditCompany(props) {
         formData.append("description", data.description);
         formData.append("createdBy", user.id);
 
-        // If a new logo is uploaded, append it to formData
         if (data.logo?.[0]) {
             formData.append("companyIconImage", data.logo[0]);
         }
@@ -75,10 +72,6 @@ function EditCompany(props) {
         });
     };
 
-    // Enable editing when a field is clicked
-    // const enableEdit = (field) => {
-    //     setEditField(field);
-    // };
     const enableEdit = (field) => {
         setIsEditing({ ...isEditing, [field]: true });
     };
@@ -90,11 +83,7 @@ function EditCompany(props) {
                 {loading ?
                     <SkeletonCard />
                     :
-                    <form
-                        onSubmit={handleSubmit(onSubmit)}
-
-                    >
-                        {/* Logo */}
+                    <form onSubmit={handleSubmit(onSubmit)}>
                         <div
                             className="flex justify-center mb-4"
                             onClick={() => enableEdit("logo")}
@@ -117,7 +106,6 @@ function EditCompany(props) {
                             )}
                         </div>
 
-                        {/* Name */}
                         <div
                             className="mb-4"
                             onClick={() => enableEdit("name")}
@@ -135,7 +123,6 @@ function EditCompany(props) {
                             )}
                         </div>
 
-                        {/* Industry */}
                         <div
                             className="mb-4"
                             onClick={() => enableEdit("industry")}
@@ -151,7 +138,6 @@ function EditCompany(props) {
                             )}
                         </div>
 
-                        {/* Location */}
                         <div
                             className="mb-4"
                             onClick={() => enableEdit("location")}
@@ -167,7 +153,6 @@ function EditCompany(props) {
                             )}
                         </div>
 
-                        {/* Website */}
                         <div
                             className="mb-4"
                             onClick={() => enableEdit("website")}
@@ -192,7 +177,6 @@ function EditCompany(props) {
                             )}
                         </div>
 
-                        {/* Description */}
                         <div
                             className="mb-4 border-b"
                             onClick={() => enableEdit("description")}

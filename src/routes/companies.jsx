@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import { companiez } from '@/fakeUtilities/myUtils';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import CompanyCard from '@/myComponents/CompanyCard';
 import { useFetchList } from '@/myHooks/fetchList';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
@@ -24,11 +22,14 @@ function Companies(props) {
             setUrlParam("");
         }
     }
-    const [companies, loading, error] = useFetchList(`companies${user.userType === 'admin' ? urlParam : `?verifiedCompany=approved`}`);
-    // const loading = true;
-    // console.log("companies:", companies);
-    // console.log("loading:", loading);
 
+
+    useEffect(() => {
+        console.log("urlParam: ", urlParam)
+    }, [urlParam]);
+
+    const finalUrl =  `${user.userType === 'admin' ? urlParam : `?verifiedCompany=approved${urlParam ? `&${urlParam.slice(1)}` : ''}`}`
+    const [companies, loading, error] = useFetchList(`companies${finalUrl}`);
 
     return (
         <div className="flex flex-col w-full h-full p-6">
@@ -36,7 +37,7 @@ function Companies(props) {
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
                     <h1 className="text-2xl font-semibold p-3 sm:p-0">Listed Companies</h1>
                     <div>
-                        <SearchBar field='Company' />
+                        <SearchBar field='Company' setUrlParam={setUrlParam} />
                     </div>
                 </div>
                 {myUserType === 'admin' && <div className='flex flex-row justify-center md:justify-end py-5'>

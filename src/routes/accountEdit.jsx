@@ -4,20 +4,18 @@ import { SkeletonCard } from '@/myComponents/SkeletonCard';
 import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
 import { authenticatUser } from '@/redux/slices/userSlice';
 import axios from 'axios';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 function AccountEdit(props) {
-    const { user, isLoggedIn } = useSelector(state => state.user);
+    const { user } = useSelector(state => state.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const myUserType = user.userType;
     let [myAccountData, loading, error] = useFetchDataDetail(myUserType === 'employee' ? `users/${user.id}` : `employers/${user.id}`);
-    // console.log("myAccountData:", myAccountData);
-    // console.log("user:", user);
 
     const { register, handleSubmit, setValue } = useForm();
     const [isEditing, setIsEditing] = useState({
@@ -64,8 +62,7 @@ function AccountEdit(props) {
             name: false, email: false, profession: false, experienced: false, bio: false, profileImage: false,
         });
         setTimeout(() => {
-            // window.location.reload();
-            navigate(`/${user.userType}/account`)
+            window.location.reload();
         }, 1200);
     };
 

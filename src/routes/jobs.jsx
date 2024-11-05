@@ -9,10 +9,8 @@ import SearchBar from '@/myComponents/searchBar';
 
 
 function Jobs(props) {
-    const { user, isLoggedIn } = useSelector(state => state.user);
+    const { user } = useSelector(state => state.user);
     const [urlParam, setUrlParam] = useState('')
-
-
 
     const bringData = async (jobsVerificaion) => {
         if (jobsVerificaion === 'approved') {
@@ -26,7 +24,13 @@ function Jobs(props) {
         }
     }
 
-    const [jobs, loading, error] = useFetchList(`jobs${user?.userType === 'admin' ? urlParam : `?verifiedJob=approved`}`);
+    useEffect(() => {
+        console.log("urlParam: ", urlParam)
+    }, [urlParam]);
+
+    const finalUrl = user?.userType === 'admin' ? urlParam : `?verifiedJob=approved${urlParam ? `&${urlParam.slice(1)}` : ''}`;
+    const [jobs, loading, error] = useFetchList(`jobs${finalUrl}`);
+
 
     return (
         <>
@@ -37,7 +41,7 @@ function Jobs(props) {
                             <h1 className='font-bold text-2xl  p-3 sm:p-0'>Available Job listings</h1>
                         </div>
                         <div>
-                            <SearchBar field='Job' />
+                            <SearchBar field='Job' setUrlParam={setUrlParam} />
                         </div>
                     </div>
                     {user?.userType === 'admin' && <div className='flex flex-row justify-center md:justify-end py-5'>

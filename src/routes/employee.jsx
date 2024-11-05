@@ -1,5 +1,4 @@
 import React from 'react';
-// import { candidates } from '@/fakeUtilities/myUtils';
 import { useParams } from 'react-router-dom';
 import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
@@ -7,10 +6,6 @@ import { SkeletonCard } from '@/myComponents/SkeletonCard';
 function Employee(props) {
     const { id } = useParams()
     const [user, loading, error] = useFetchDataDetail(`users/${id}`);
-    // const [candidate] = candidates.filter(candidate => candidate._id === '670907c9ce39fb27cac51ddb')
-    // console.log("user:", user)
-    // console.log("loading:", loading)
-
 
     return (
         <div className="flex flex-col w-full h-full p-6">

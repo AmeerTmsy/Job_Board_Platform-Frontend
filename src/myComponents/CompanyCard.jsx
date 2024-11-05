@@ -32,7 +32,7 @@ function CompanyCard({ company }) {
                     <img
                         src={company.logo}
                         alt={company.name}
-                        className="w-28 h-28 rounded-full mb-4"
+                        className="w-28 h-28 rounded-full mb-4 object-cover"
                     />
                     <h2 className="text-lg font-medium">{company.name}</h2>
                     <p className="text-sm text-gray-600">{company.industry}</p>

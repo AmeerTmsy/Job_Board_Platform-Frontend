@@ -21,7 +21,6 @@ function NewJobCreate() {
     }
     const onSubmit = async (data) => {
         data = { ...data, jobCreatedBy: user.id }
-        // console.log(data);
         await axios.post(`${import.meta.env.VITE_API_BASE_URL}/jobs`, data, { withCredentials: true })
             .then(response => {
                 console.log(response?.data?.data)
@@ -54,7 +53,6 @@ function NewJobCreate() {
             <h1 className="text-2xl font-semibold text-center mb-4">Create a new job</h1>
             <div className="border shadow-md p-4 rounded-lg bg-white">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    {/* Title and Company */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <input
@@ -94,7 +92,6 @@ function NewJobCreate() {
                         }
                     </div>
 
-                    {/* Headline */}
                     <div>
                         <input
                             type="text"
@@ -105,7 +102,6 @@ function NewJobCreate() {
                         {errors.headline && <p className="text-red-500 text-sm">{errors.headline.message}</p>}
                     </div>
 
-                    {/* Job Type, Hiring, and Salary */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <select
@@ -143,7 +139,6 @@ function NewJobCreate() {
                         </div>
                     </div>
 
-                    {/* Location */}
                     <div>
                         <input
                             type="text"
@@ -154,7 +149,6 @@ function NewJobCreate() {
                         {errors.location && <p className="text-red-500 text-sm">{errors.location.message}</p>}
                     </div>
 
-                    {/* Description */}
                     <div>
                         <textarea
                             placeholder="Description"

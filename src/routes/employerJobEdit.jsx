@@ -1,7 +1,4 @@
-import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { companyNames } from '@/fakeUtilities/myUtils';
-import { sampleJobDetails } from '@/fakeUtilities/myUtils';
 import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -13,12 +10,8 @@ function EmployerJobEdit(props) {
     const { id } = useParams();
     const navigate = useNavigate();
     const [job, loading, error] = useFetchDataDetail(`jobs/${id}`);
-    // if (!loading) {
-    //     console.log(job);
-    // }
+    
     const onSubmit = async (data) => {
-        // console.log(data);
-
         await axios.patch(`${import.meta.env.VITE_API_BASE_URL}/jobs/${job._id}`, data, { withCredentials: true })
             .then(response => {
                 // console.log('response?.data?.data:', response?.data?.data);

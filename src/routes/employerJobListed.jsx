@@ -1,14 +1,12 @@
 import React, { useId } from 'react';
-// import { jobs } from '@/fakeUtilities/myUtils';
 import { Link } from 'react-router-dom';
-import CompanyJobAddDropdown from '@/myComponents/companyJobAddDropdown';
 import { useFetchList } from '@/myHooks/fetchList';
 import { useSelector } from 'react-redux';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
 import { TooltipDemo } from '@/myComponents/HoverToolTip';
 
 function EmployerJobListed(props) {
-    const { user, isLoaggedIn } = useSelector(state => state.user)
+    const { user } = useSelector(state => state.user)
     const [jobs, loading, error] = useFetchList(`jobs?jobCreatedBy=${user.id}`)
     return (
         <main>
@@ -22,7 +20,6 @@ function EmployerJobListed(props) {
                         <div className=' border-l-2 custom-input'><i className="ri-search-line px-2 focus:outline-slate-100 text-black"></i></div>
                     </div>
                     <div className='flex justify-center items-center'>
-                        {/* <CompanyJobAddDropdown /> */}
                         <TooltipDemo add={'job'} />
                     </div>
                 </div>

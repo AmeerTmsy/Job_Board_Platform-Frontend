@@ -8,37 +8,30 @@ export const useFetchList = (url) => {
 
     if (!url) return [null, false, null];
 
+    if (!url) {
+        setData(null);
+        setIsLoading(false);
+        setError(null);
+        return;
+    }
+
+    const fetchData = async () => {
+        await axios.get(`${import.meta.env.VITE_API_BASE_URL}/${url}`, { withCredentials: true })
+            .then(response => {
+                console.log("response: ", response)
+                setError(null)
+                setData(response?.data?.data);
+                setIsLoading(false);
+                setError(null);
+            })
+            .catch(error => {
+                console.log(error, "|| Unable to fetch list");
+                setError(error?.response?.data?.message);
+                setIsLoading(false);
+            })
+    }
     useEffect(() => {
-        if (!url) {
-            setData(null);
-            setIsLoading(false);
-            setError(null);
-            return;
-        }
-
-        // let isMounted = true;
-
-        const fetchData = async () => {
-            // console.log("url: ",url)
-            await axios.get(`${import.meta.env.VITE_API_BASE_URL}/${url}`, { withCredentials: true })
-                .then(response => {
-                    setError(null)
-                    setData(response?.data?.data);
-                    setIsLoading(false);
-                    setError(null);
-                })
-                .catch(error => {
-                    console.log(error/*.response.data.message === 'Jobs not found' && 'there is not any regcted jobs'*/, "|| Unable to fetch list");
-                    setError(error?.response?.data?.message);
-                    setIsLoading(false);
-                })
-        }
         fetchData()
-
-        // return () => {
-        //     isMounted = false;
-        // };
-
     }, [url]);
 
     return [data, isLoading, error]

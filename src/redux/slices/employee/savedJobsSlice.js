@@ -9,11 +9,8 @@ export const employeeSavedJobsSlice = createSlice({
   name: 'employeeSavedJobs',
   initialState,
   reducers: {
-    setEmployeeSavedJobs: (state, action) => {
-      
+    setEmployeeSavedJobs: (state, action) => {      
       state.employeeSavedJobs = action.payload;
-      // console.log("action.payload", action.payload);
-      // console.log("state.employeeSavedJobs", state.employeeSavedJobs);
     }
   }
 })

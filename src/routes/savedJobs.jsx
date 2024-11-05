@@ -1,10 +1,7 @@
 import { useFetchList } from "@/myHooks/fetchList";
-// import { jobs } from "../fakeUtilities/myUtils"
 import JobCard from '../myComponents/JobCard';
 import { useEffect, useState } from "react";
 import { SkeletonCard } from "@/myComponents/SkeletonCard";
-// import { useLoaderData } from 'react-router-dom';
-// import axios from 'axios';
 
 function SavedJobs(props) {
     const [savedJobs, loading, error] = useFetchList("saveJob");

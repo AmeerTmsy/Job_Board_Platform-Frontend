@@ -1,14 +1,9 @@
-import React, { useEffect } from 'react';
-import { Link, Outlet, useLoaderData } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { Outlet, useLoaderData } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import Header from '@/myComponents/Header';
 import Footer from '@/myComponents/Footer';
-import axios from 'axios'; // Importing axios
+import axios from 'axios';
 import { authenticatUser } from '@/redux/slices/userSlice';
-import { useFetchList } from '@/myHooks/fetchList';
-import { setEmployeeSavedJobs } from '@/redux/slices/employee/savedJobsSlice';
-import { setEmployerJobs } from '@/redux/slices/employer/jobsSlice';
-import { setEmployerCompanies } from '@/redux/slices/employer/companiesSlice';
 import StorNSdata from '@/verified/storNSdata';
 
 export async function loader() {
@@ -21,23 +16,19 @@ export async function loader() {
             login = true;
         })
         .catch(error => console.log("error:", error?.response?.data?.message));
-
-    // console.log(userData)
     return { userData, login };
 }
 
 function Root(props) {
     const loaderData = useLoaderData();
-    const userData = loaderData?.userData || {}; // Safeguard with an empty object
+    const userData = loaderData?.userData || {};
     const login = loaderData?.login || false;
 
     const dispatch = useDispatch();
 
-    // useEffect(() => {
-        if (login) dispatch(authenticatUser(userData))
-    // }, [login, userData, dispatch])
+    if (login) dispatch(authenticatUser(userData))
 
-    
+
     return (
         <div>
             <Header />

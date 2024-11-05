@@ -1,5 +1,4 @@
 
-import { jobs } from '@/fakeUtilities/myUtils';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
 import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
 import React from 'react';
@@ -10,8 +9,6 @@ function EmployerJobDetail(props) {
     const { user, isLoggedIn } = useSelector(state => state.user);
     const {id} = useParams()
     const [job, loading, error] = useFetchDataDetail(`jobs/${id}`);
-    // const [job] = jobs.filter(job => job._id === params.id)
-    // console.log(job)
 
     return (
         <div className=" mx-auto mt-10 sm:mx-3 flex flex-col justify-center items-center">

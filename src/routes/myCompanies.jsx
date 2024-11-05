@@ -10,7 +10,7 @@ import { TooltipDemo } from '@/myComponents/HoverToolTip';
 function MyCompanies(props) {
     const { user, isLoaggedIn } = useSelector(state => state.user)
     const [companies, loading, error] = useFetchList(`companies?createdBy=${user.id}`)
-    // if (!loading) console.log(companies )
+    
     return (
         <div className="flex flex-col w-full h-full p-6">
             <div className="flex justify-between items-center mb-4">
@@ -21,7 +21,6 @@ function MyCompanies(props) {
                     <div className=' border-l-2 custom-input'><i className="ri-search-line px-2 focus:outline-slate-100 text-black"></i></div>
                 </div>
                 <div className='flex justify-center items-center'>
-                    {/* <CompanyJobAddDropdown /> */}
                     <TooltipDemo add={'company'} />
                 </div>
             </div>

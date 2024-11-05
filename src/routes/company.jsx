@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-// import { companiez } from '@/fakeUtilities/myUtils';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
@@ -8,7 +7,7 @@ import axios from 'axios';
 import { toast } from '@/hooks/use-toast';
 
 function Company(props) {
-    const { user, isLoggedIn } = useSelector(state => state.user);
+    const { user } = useSelector(state => state.user);
     const { employerCompanies } = useSelector(state => state.employerCompanies);
     const { id } = useParams()
     const [company, loading, error] = useFetchDataDetail(`companies/${id}`);
@@ -40,8 +39,6 @@ function Company(props) {
                 });
                 setTimeout(() => {
                     window.location.reload()
-                    // console.log("response?.data?.data?._id", response?.data?.data?._id)
-                    // console.log('user.userType', user.userType)
                 }, 1200);
             } catch (error) {
                 console.error("Error approving company:", error);
@@ -63,8 +60,6 @@ function Company(props) {
                 });
                 setTimeout(() => {
                     window.location.reload()
-                    // console.log("response?.data?.data?._id", response?.data?.data?._id)
-                    // console.log('user.userType', user.userType)
                 }, 1200);
             } catch (error) {
                 console.error("Error regecting company:", error);
