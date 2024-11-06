@@ -15,9 +15,9 @@ function Job(props) {
     const { employeeSavedJobs } = useSelector(state => state.employeeSavedJobs);
     const { employerJobs } = useSelector(state => state.employerJobs);
     const { id } = useParams();
-    
+
     const [job, loading, error] = useFetchDataDetail(`jobs/${id}`);
-    
+
     const [badgColor, setBadgColor] = useState('');
     const [saveJobBadgColor, setSaveJobBadgColor] = useState('');
     const [myJob, setMyJob] = useState(false);
@@ -32,51 +32,25 @@ function Job(props) {
     }, [job, loading]);
 
     const companyVerification = async (verification) => {
-        if (verification === 'approve') {
-            console.log(verification);
-            try {
-                const url = `http://localhost:3000/jobs/${job._id}`;
-                const response = await axios.patch(url, { verifiedJob: 'approved' }, { withCredentials: true });
-                console.log("Job updated:", response);
-                toast({
-                    description: `${response?.data?.data?.name} has approved to publish`,
-                    style: { backgroundColor: '#90ee90', color: 'black' },
-                });
-                setTimeout(() => {
-                    window.location.reload()
-                    // console.log("response?.data?.data?._id", response?.data?.data?._id)
-                    // console.log('user.userType', user.userType)
-                }, 1200);
-            } catch (error) {
-                console.error("Error approving job:", error);
-                toast({
-                    description: "Unable to approve, please try again in a while",
-                    style: { backgroundColor: '#ff5151', color: 'black' },
-                });
-            }
-        }
-        else if (verification === 'regect') {
-            console.log(verification);
-            try {
-                const url = `http://localhost:3000/jobs/${job._id}`;
-                const response = await axios.patch(url, { verifiedJob: 'rejected' }, { withCredentials: true });
-                console.log("Job updated:", response);
-                toast({
-                    description: `${response?.data?.data?.name} has regected to publish`,
-                    style: { backgroundColor: '#90ee90', color: 'black' },
-                });
-                setTimeout(() => {
-                    window.location.reload()
-                    // console.log("response?.data?.data?._id", response?.data?.data?._id)
-                    // console.log('user.userType', user.userType)
-                }, 1200);
-            } catch (error) {
-                console.error("Error regecting Job:", error);
-                toast({
-                    description: "Unable to regect, please try again in a while",
-                    style: { backgroundColor: '#ff5151', color: 'black' },
-                });
-            }
+
+        console.log(verification);
+        try {
+            const url = `${import.meta.env.VITE_API_BASE_URL}/jobs/${job._id}`;
+            const response = await axios.patch(url, { verifiedJob: verification === 'approve' ? 'approved' : 'rejected' }, { withCredentials: true });
+            console.log("Job updated:", response);
+            toast({
+                description: `${response?.data?.data?.title} has ${verification === 'approve' ? 'approved' : 'rejected'} to publish`,
+                style: { backgroundColor: '#90ee90', color: 'black' },
+            });
+            setTimeout(() => {
+                window.location.reload()
+            }, 1200);
+        } catch (error) {
+            console.error("Error approving job:", error);
+            toast({
+                description: `Unable to ${verification === 'approve' ? 'approve' : 'rejecte'}, please try again in a while`,
+                style: { backgroundColor: '#ff5151', color: 'black' },
+            });
         }
     }
 
@@ -143,8 +117,8 @@ function Job(props) {
                                 </Link>
                             </div>
                             :
-                             user.userType === 'employee' && <ResumeAttachCard job={job} />
-                            
+                            user.userType === 'employee' && <ResumeAttachCard job={job} />
+
                         }
                     </div>
                     <div className="flex flex-col justify-between items-center w-full md:w-1/2 p-4">

@@ -27,47 +27,24 @@ function Company(props) {
     }, [employerCompanies, company])
 
     const companyVerification = async (verification) => {
-        if (verification === 'approve') {
-            console.log(verification);
-            try {
-                const url = `http://localhost:3000/companies/${company._id}`;
-                const response = await axios.patch(url, { verifiedCompany: 'approved' }, { withCredentials: true });
-                console.log("Company updated:", response);
-                toast({
-                    description: `${response?.data?.data?.name} has approved to publish`,
-                    style: { backgroundColor: '#90ee90', color: 'black' },
-                });
-                setTimeout(() => {
-                    window.location.reload()
-                }, 1200);
-            } catch (error) {
-                console.error("Error approving company:", error);
-                toast({
-                    description: "Unable to approve, please try again in a while",
-                    style: { backgroundColor: '#ff5151', color: 'black' },
-                });
-            }
-        }
-        else if (verification === 'regect') {
-            console.log(verification);
-            try {
-                const url = `http://localhost:3000/companies/${company._id}`;
-                const response = await axios.patch(url, { verifiedCompany: 'rejected' }, { withCredentials: true });
-                console.log("Company updated:", response);
-                toast({
-                    description: `${response?.data?.data?.name} has regected to publish`,
-                    style: { backgroundColor: '#90ee90', color: 'black' },
-                });
-                setTimeout(() => {
-                    window.location.reload()
-                }, 1200);
-            } catch (error) {
-                console.error("Error regecting company:", error);
-                toast({
-                    description: "Unable to regect, please try again in a while",
-                    style: { backgroundColor: '#ff5151', color: 'black' },
-                });
-            }
+        console.log(verification);
+        try {
+            const url = `${import.meta.env.VITE_API_BASE_URL}/companies/${company._id}`;
+            const response = await axios.patch(url, { verifiedCompany: verification === 'approve' ? 'approved' : 'rejected' }, { withCredentials: true });
+            console.log("Company updated:", response);
+            toast({
+                description: `${response?.data?.data?.name} has ${verification === 'approve' ? 'approved' : 'rejected'} to publish`,
+                style: { backgroundColor: '#90ee90', color: 'black' },
+            });
+            setTimeout(() => {
+                window.location.reload()
+            }, 1200);
+        } catch (error) {
+            console.error(`Error ${verification === 'approve' ? 'approving' : 'rejecting'} company:`, error);
+            toast({
+                description: `Unable to ${verification === 'approve' ? 'approved' : 'rejected'}, please try again in a while`,
+                style: { backgroundColor: '#ff5151', color: 'black' },
+            });
         }
     }
 
