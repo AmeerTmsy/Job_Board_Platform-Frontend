@@ -63,7 +63,7 @@ function SignUpForm(props) {
                         }
                     })
                     setTimeout(() => {
-                        navigate('/');
+                        window.location.href = '/';
                     }, 1500);
                 })
                 .catch(error => {
