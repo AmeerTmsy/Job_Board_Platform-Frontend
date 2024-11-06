@@ -72,7 +72,7 @@ function AccountEdit(props) {
             name: false, email: false, profession: false, experienced: false, bio: false, profileImage: false,
         });
         setTimeout(() => {
-            // window.location.reload();
+            window.location.reload();
         }, 1200);
     };
 
