@@ -44,7 +44,7 @@ function AccountEdit(props) {
         const url = `${import.meta.env.VITE_API_BASE_URL}/${myUserType === 'employee' ? 'users' : 'employers'}/${user.id}`;
         try {
             toast({
-                description: `${myCompanyData.name} info is saving...`,
+                description: `Your info is saving...`,
                 style: {
                     backgroundColor: '#00fff2',
                     color: 'black'
@@ -72,7 +72,7 @@ function AccountEdit(props) {
             name: false, email: false, profession: false, experienced: false, bio: false, profileImage: false,
         });
         setTimeout(() => {
-            window.location.reload();
+            // window.location.reload();
         }, 1200);
     };
 
