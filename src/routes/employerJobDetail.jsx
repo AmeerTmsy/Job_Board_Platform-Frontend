@@ -25,8 +25,7 @@ function EmployerJobDetail(props) {
                     <p className="text-gray-600">Job type: {job.jobType}</p>
                     <p className="text-gray-600 mb-4">Salary: {job.salary}</p>
                     <hr />
-                    <div className='flex flex-col justify-center items-center h-2/4'>
-                        <p className='mb-5'>To update information about this job Click on the fields to make changes</p>
+                    <div className='flex flex-col justify-start items-start h-2/4 p-2'>
                         <Link to={`/employer/employer_job_edit/${job._id}`} className="bg-blue-100 hover:bg-blue-200 text-blue-600 py-2 px-6 rounded">
                             Edit Job Information
                         </Link>

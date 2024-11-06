@@ -1,6 +1,6 @@
 // src/components/NewJobCreate.js
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { companyNames } from '@/fakeUtilities/myUtils';
 import { useSelector } from 'react-redux';
@@ -8,6 +8,7 @@ import { useFetchList } from '@/myHooks/fetchList';
 import axios from 'axios';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import useThemeStyle from '@/myHooks/useThemeStyle';
 
 function NewJobCreate() {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -15,10 +16,12 @@ function NewJobCreate() {
     const [companies, loading, error] = useFetchList(`companies?createdBy=${user.id}`)
     const navigate = useNavigate();
 
-    if (!loading) {
-        console.log(companies);
+    const themeStyle = useThemeStyle();
 
-    }
+    // if (!loading) {
+    //     console.log(companies);
+
+    // }
     const onSubmit = async (data) => {
         data = { ...data, jobCreatedBy: user.id }
         await axios.post(`${import.meta.env.VITE_API_BASE_URL}/jobs`, data, { withCredentials: true })
@@ -48,10 +51,15 @@ function NewJobCreate() {
             })
     };
 
+    useEffect(() => {
+        companies && companies.map((company) => company.verifiedCompany === "approved" && console.log(company))
+        console.log('----------------------------------------------------')
+    }, [companies]);
+
     return (
         <div className="p-6 max-w-lg mx-auto">
             <h1 className="text-2xl font-semibold text-center mb-4">Create a new job</h1>
-            <div className="border shadow-md p-4 rounded-lg bg-white">
+            <div className={`border shadow-md p-4 rounded-lg ${themeStyle}`}>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -70,9 +78,7 @@ function NewJobCreate() {
                                     className="border p-2 rounded w-full"
                                 >
                                     <option value="">Company</option>
-                                    {companyNames.map((company) => (
-                                        <option key={company.id} value={company.name}>{company.name}</option>
-                                    ))}
+                                    {companyNames.map((company) => ( <option key={company.id} value={company.name}>{company.name}</option>) )}
                                 </select>
                                 {errors.company && <p className="text-red-500 text-sm">{errors.company.message}</p>}
                             </div>
@@ -84,7 +90,7 @@ function NewJobCreate() {
                                 >
                                     <option value="">Company</option>
                                     {companies.map((company) => (
-                                        <option key={company.id} value={company._id}>{company.name}</option>
+                                       company.verifiedCompany === "approved" && <option key={company.id} value={company._id}>{company.name}</option>
                                     ))}
                                 </select>
                                 {errors.company && <p className="text-red-500 text-sm">{errors.company.message}</p>}

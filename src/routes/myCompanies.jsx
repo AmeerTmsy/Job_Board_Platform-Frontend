@@ -1,29 +1,27 @@
-import React from 'react';
-
-import { ownCompanies } from '@/fakeUtilities/myUtils';
-import CompanyCard from '@/myComponents/CompanyCard';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useFetchList } from '@/myHooks/fetchList';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
 import { TooltipDemo } from '@/myComponents/HoverToolTip';
+import useThemeStyle from '@/myHooks/useThemeStyle';
+import EmployerCompanyCard from '@/myComponents/employerCompnayCard';
 
 function MyCompanies(props) {
     const { user, isLoaggedIn } = useSelector(state => state.user)
+    const themeStyle = useThemeStyle()
     const [companies, loading, error] = useFetchList(`companies?createdBy=${user.id}`)
-    
+
     return (
         <div className="flex flex-col w-full h-full p-6">
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-semibold">Listed Companies</h1>
+            <div className="flex flex-row justify-between items-center mb-4">
+                <div>
+                    <h1 className='font-bold text-2xl  p-3 sm:p-0'>Yours Listed Companies</h1>
+                </div>
                 <div className='flex flex-row justify-center items-center gap-3'>
-                <div className='border-2 rounded-full px-2 py-1 pl-3 bg-slate-100 flex flex-row'>
-                    <input className='bg-slate-100' type="text" name="search" id="search" placeholder='search' />
-                    <div className=' border-l-2 custom-input'><i className="ri-search-line px-2 focus:outline-slate-100 text-black"></i></div>
+                    <div className={`flex justify-center items-center ${themeStyle}`}>
+                        <TooltipDemo add={'company'} />
+                    </div>
                 </div>
-                <div className='flex justify-center items-center'>
-                    <TooltipDemo add={'company'} />
-                </div>
-            </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -35,7 +33,7 @@ function MyCompanies(props) {
                     ))
                     :
                     companies.map((company, index) => (
-                        <CompanyCard company={company} key={company._id} />
+                        <EmployerCompanyCard company={company} key={company._id} />
                     ))
                 }
             </div>

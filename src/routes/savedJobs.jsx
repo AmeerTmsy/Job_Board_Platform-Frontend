@@ -14,22 +14,15 @@ function SavedJobs(props) {
             setJobsCount(savedJobs.totalJobSaved || 0);
 
             jobs.map(job => console.log("job:", job.jobId))
-            console.log("jobsCount:", jobsCount);
+            console.log("jobsCount:", jobs);
         }
     }, [loading, savedJobs]);
 
 
     return (
         <main>
-            <div className='flex flex-col sm:flex-row justify-between items-center p-4 '>
-                <div>
+            <div className='flex justify-center items-center p-6 '>
                     <h1 className='font-bold text-2xl'>Your Saved Jobs</h1>
-                </div>
-                <div className='border-2 rounded-full px-2 py-1 pl-3 bg-slate-100 flex flex-row'>
-                    <input className='bg-slate-100 text-black' type="text" name="search" id="search" placeholder='search' />
-                    <div className=' border-l-2 custom-input'><i className="ri-search-line px-2 focus:outline-slate-100 text-black"></i></div>
-                </div>
-
             </div>
             {loading ?
                 <div className='flex flex-col justify-center items-center gap-1 flex-wrap'>
@@ -37,7 +30,10 @@ function SavedJobs(props) {
                 </div>
                 :
                 <div className='flex flex-col justify-center items-center gap-1 flex-wrap'>
-                    {jobs.map(job => (<JobCard key={job.jobId._id} job={job.jobId} />))}
+                    {
+                        jobs.length === 0 ? <div className="flex justify-center items-center h-[65vh]">not any saved jobs</div> :
+                    jobs.map(job => (<JobCard key={job.jobId._id} job={job.jobId} />))
+                    }
                 </div>
             }
         </main>

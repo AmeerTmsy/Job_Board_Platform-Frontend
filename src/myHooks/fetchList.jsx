@@ -18,7 +18,7 @@ export const useFetchList = (url) => {
     const fetchData = async () => {
         await axios.get(`${import.meta.env.VITE_API_BASE_URL}/${url}`, { withCredentials: true })
             .then(response => {
-                console.log("response: ", response)
+                // console.log("response: ", response)
                 setError(null)
                 setData(response?.data?.data);
                 setIsLoading(false);

@@ -37,29 +37,38 @@ function EditCompany(props) {
         formData.append("description", data.description);
         formData.append("createdBy", user.id);
 
-        if (data.logo?.[0]) {
+        if (data?.logo?.[0]) {
             formData.append("companyIconImage", data.logo[0]);
         }
 
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
+        // for (let [key, value] of formData.entries()) {
+        //     console.log(`${key}: ${value}`);
+        // }
 
 
+        const url = `${import.meta.env.VITE_API_BASE_URL}/companies/${myCompanyData._id}`;
         try {
-            const response = await axios.patch(
-                `http://localhost:3000/companies/${myCompanyData._id}`,
-                formData,
-                { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true }
-            );
-            console.log("Company updated:", response);
             toast({
-                description: "Changes saved, reload page",
-                style: { backgroundColor: '#90ee90', color: 'black' },
-            });
-            setTimeout(() => {
-                navigate(`/employer/companies/${response?.data?.data?._id}`)
-            }, 1200);
+                description: `${myCompanyData.name} info is saving...`,
+                style: {
+                    backgroundColor: '#00fff2',
+                    color: 'black'
+                }
+            })
+            await axios.patch(url, formData,{ 
+                headers: { "Content-Type": "multipart/form-data" }, 
+                withCredentials: true }
+            )
+            .then(response => {
+                // console.log("Company updated:", response);
+                toast({
+                    description: "Changes saved successfully",
+                    style: { backgroundColor: '#90ee90', color: 'black' },
+                });
+                setTimeout(() => {
+                    navigate(`/employer/companies/${response?.data?.data?._id}`)
+                }, 1200);
+            })
         } catch (error) {
             console.error("Error updating company:", error);
             toast({
@@ -94,7 +103,7 @@ function EditCompany(props) {
                                         type="file"
                                         accept="image/*"
                                         {...register("logo")}
-                                        className="mt-2"
+                                        className="mt-2 text-black"
                                     />
                                 </div>
                             ) : (

@@ -9,12 +9,15 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import Applications from './applications';
+import useThemeStyle from '@/myHooks/useThemeStyle';
 
 function Job(props) {
     const { user, isLoggedIn, isLoading } = useSelector(state => state.user);
     const { employeeSavedJobs } = useSelector(state => state.employeeSavedJobs);
     const { employerJobs } = useSelector(state => state.employerJobs);
     const { id } = useParams();
+
+    const themeStyle = useThemeStyle();
 
     const [job, loading, error] = useFetchDataDetail(`jobs/${id}`);
 
@@ -42,9 +45,11 @@ function Job(props) {
                 description: `${response?.data?.data?.title} has ${verification === 'approve' ? 'approved' : 'rejected'} to publish`,
                 style: { backgroundColor: '#90ee90', color: 'black' },
             });
-            setTimeout(() => {
-                window.location.reload()
-            }, 1200);
+
+            verification === 'approve' ? setBadgColor('bg-green-200 text-green-700') : setBadgColor('bg-red-200 text-red-600');
+            // setTimeout(() => {
+            //     window.location.reload()
+            // }, 1200);
         } catch (error) {
             console.error("Error approving job:", error);
             toast({
@@ -62,6 +67,7 @@ function Job(props) {
     const manageJobSave = async () => {
 
         const data = { jobId: job._id, jobTitle: job.title };
+        // console.log(data)
         try {
             if (saveJobBadgColor === 'text-gray-400') {
                 console.log('hello');
@@ -90,7 +96,7 @@ function Job(props) {
                     <SkeletonCard />
                 </div>
                 :
-                <div className="relative flex flex-col md:flex-row justify-between border border-gray-300 rounded-lg p-4 mx-2">
+                <div className={`relative flex flex-col md:flex-row justify-between border border-gray-300 rounded-lg p-4 mx-2 ${themeStyle}`}>
                     {user.userType === 'admin' && <span className={`absolute top-4 right-0 ${badgColor} text-xs font-semibold px-5 py-2 rounded-l`}>
                         {job.verifiedJob}
                     </span>}
@@ -104,10 +110,10 @@ function Job(props) {
                     )}
                     <div className="w-full md:w-1/2 p-4 border-b md:border-b-0 md:border-r border-gray-200">
                         <h3 className="text-lg font-bold mb-2">{job.title}</h3>
-                        <p className="text-gray-700">{job.company.name}</p>
-                        <p className="text-gray-600">Location: {job.location}</p>
-                        <p className="text-gray-600">Job type:{job.jobType}</p>
-                        <p className="text-gray-600 mb-4">Salary: {job.salary}</p>
+                        <p className="text-gray-500">{job.company.name}</p>
+                        <p className="text-gray-500">Location: {job.location}</p>
+                        <p className="text-gray-500">Job type:{job.jobType}</p>
+                        <p className="text-gray-500 mb-4">Salary: {job.salary}</p>
                         <hr />
                         {!isLoggedIn ?
                             <div className='flex flex-col justify-center items-center h-2/4'>
@@ -125,11 +131,15 @@ function Job(props) {
                         <h3 className="text-lg font-bold mb-4">
                             {job.headline}
                         </h3>
-                        <p className="text-gray-700">
+                        <p className="text-gray-500">
                             {job.description}
                         </p>
                         {
-                            user.userType === "employer" && myJob && <Link to={`/employer/employer_job_detail/${job._id}`} className='self-start bg-blue-600 border mt-2 px-7 py-1 rounded' >chang job info</Link>
+                            user.userType === "employer" &&
+                            myJob &&
+                            <Link to={`/employer/employer_job_edit/${job._id}`} className="bg-blue-400 hover:bg-blue-200 text-blue-50 py-2 px-6 rounded mt-5">
+                                Edit Job Information
+                            </Link>
                         }
                         {user.userType === 'admin' &&
                             <div className='flex flex-row gap-3'>
@@ -140,7 +150,11 @@ function Job(props) {
                     </div>
                 </div>
             }
-            {user.userType === 'employer' && myJob && <Applications job={job} />}
+            {user.userType === 'employer' && myJob && <div>
+                <hr className={`my-5 ${themeStyle}`} />
+                <h3 className='text-xl font-bold'>Applications</h3>
+                <Applications job={job} />
+            </div>}
         </div>
     );
 }

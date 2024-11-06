@@ -1,4 +1,5 @@
 import { toast } from '@/hooks/use-toast';
+import useThemeStyle from '@/myHooks/useThemeStyle';
 import axios from 'axios';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -9,6 +10,7 @@ function NewCompanyCreate() {
     const { user } = useSelector(state => state.user);
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
+    const themeStyle = useThemeStyle();
 
     const onSubmit = async (data) => {
         data = { ...data, createdBy: user.id }
@@ -43,7 +45,7 @@ function NewCompanyCreate() {
     return (
         <main>
             <h1 className="text-2xl font-bold mb-4 py-5 text-center">Create New Company</h1>
-            <div className="max-w-lg mx-auto bg-slate-50 p-8 shadow-xl  rounded-md">
+            <div className={`max-w-lg mx-auto p-8 shadow-xl ${themeStyle} rounded-md`}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>

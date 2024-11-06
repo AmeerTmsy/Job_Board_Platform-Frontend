@@ -2,6 +2,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { toast } from '@/hooks/use-toast';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
 import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
+import useThemeStyle from '@/myHooks/useThemeStyle';
 import { authenticatUser } from '@/redux/slices/userSlice';
 import axios from 'axios';
 import React from 'react';
@@ -16,6 +17,8 @@ function AccountEdit(props) {
     const navigate = useNavigate();
     const myUserType = user.userType;
     let [myAccountData, loading, error] = useFetchDataDetail(myUserType === 'employee' ? `users/${user.id}` : `employers/${user.id}`);
+
+    const themeStyle = useThemeStyle();
 
     const { register, handleSubmit, setValue } = useForm();
     const [isEditing, setIsEditing] = useState({
@@ -40,6 +43,13 @@ function AccountEdit(props) {
 
         const url = `${import.meta.env.VITE_API_BASE_URL}/${myUserType === 'employee' ? 'users' : 'employers'}/${user.id}`;
         try {
+            toast({
+                description: `${myCompanyData.name} info is saving...`,
+                style: {
+                    backgroundColor: '#00fff2',
+                    color: 'black'
+                }
+            })
             await axios.patch(url, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 withCredentials: true,
@@ -71,7 +81,7 @@ function AccountEdit(props) {
     };
 
     return (
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="max-w-3xl mx-auto p-6 pt-10 mt-10 bg-white shadow-xl border-t rounded-lg" >
+        <form onSubmit={handleSubmit(handleFormSubmit)} className={`max-w-3xl mx-auto p-6 pt-10 mt-10 shadow-xl border-t rounded-lg ${themeStyle}`} >
             <Toaster />
             {
                 loading ?
@@ -109,10 +119,10 @@ function AccountEdit(props) {
                                     <input
                                         {...register('name')}
                                         defaultValue={myAccountData.name}
-                                        className="block w-full px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
+                                        className="block w-full px-3 py-2 border  rounded-md shadow-sm focus:ring focus:ring-blue-200"
                                     />
                                 ) : (
-                                    <p className="text-center font-semibold" onClick={() => enableEdit('name')}>
+                                    <p className={`text-center  text-2xl font-normal`} onClick={() => enableEdit('name')}>
                                         {myAccountData.name}
                                     </p>
                                 )}
@@ -124,7 +134,7 @@ function AccountEdit(props) {
                                         className="block w-full mt-2 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
                                     />
                                 ) : (
-                                    <p className="text-center text-gray-500" onClick={() => enableEdit('email')}>
+                                    <p className="text-center text-gray-500 text-lg font-semibold" onClick={() => enableEdit('email')}>
                                         {myAccountData.email}
                                     </p>
                                 )}
@@ -136,7 +146,7 @@ function AccountEdit(props) {
                                         className="block w-full mt-2 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
                                     />
                                 ) : (
-                                    <p className="text-center text-gray-500 mt-2" onClick={() => enableEdit('experienced')}>
+                                    <p className="text-center text-gray-v mt-2 text-md" onClick={() => enableEdit('experienced')}>
                                         {myAccountData.experienced} year experienced
                                     </p>
                                 )}
@@ -160,7 +170,7 @@ function AccountEdit(props) {
                                         className="block w-full h-48 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
                                     />
                                 ) : (
-                                    <p className="text-gray-600" onClick={() => enableEdit('bio')}>
+                                    <p className="text-gray-500 text-lg font-semibold" onClick={() => enableEdit('bio')}>
                                         {myAccountData.bio}
                                     </p>
                                 )}

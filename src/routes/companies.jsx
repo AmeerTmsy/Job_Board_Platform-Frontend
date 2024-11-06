@@ -24,13 +24,13 @@ function Companies(props) {
     }
 
 
+    const finalUrl = `${user.userType === 'admin' ? urlParam : `?verifiedCompany=approved${urlParam ? `&${urlParam.slice(1)}` : ''}`}`
+    const [companies, loading, error] = useFetchList(`companies${finalUrl}`);
+
+
     useEffect(() => {
         console.log("urlParam: ", urlParam)
     }, [urlParam]);
-
-    const finalUrl =  `${user.userType === 'admin' ? urlParam : `?verifiedCompany=approved${urlParam ? `&${urlParam.slice(1)}` : ''}`}`
-    const [companies, loading, error] = useFetchList(`companies${finalUrl}`);
-
     return (
         <div className="flex flex-col w-full h-full p-6">
             <div>
@@ -58,7 +58,7 @@ function Companies(props) {
                 :
                 <div>
                     {error === 'Jobs not found' ?
-                        <div className='flex flex-col sm:flex-row justify-center items-center p-4'> not any jobs </div>
+                        <div className='flex flex-col sm:flex-row justify-center items-center p-4'> not any companies </div>
                         :
                         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {companies.map((company, index) => (

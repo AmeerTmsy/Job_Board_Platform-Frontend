@@ -3,11 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-function CompanyCard({ company }) {
-    const { user, isLoggedIn } = useSelector(state => state.user);
-    const { employerCompanies } = useSelector(state => state.employerCompanies);
+function EmployerCompanyCard({ company }) {
+    const { user } = useSelector(state => state.user);
     const [badgColor, setBadgColor] = useState('');
-    const [myCompany, setMyCompany] = useState(false);
 
     const themeStyle = useThemeStyle();
 
@@ -17,20 +15,11 @@ function CompanyCard({ company }) {
         if (company.verifiedCompany == 'pending') setBadgColor('bg-yellow-200 text-yellow-700')
     }, [company]);
 
-    useEffect(() => {
-        company && setMyCompany(employerCompanies.some(item => item._id === company._id))
-    }, [employerCompanies])
-
     return (
         <div key={company._id} className={`relative border p-4 rounded-lg shadow-sm hover:shadow-md ${themeStyle}`}>
-            {user.userType === 'admin' && <span className={`absolute top-3 right-0 ${badgColor} text-xs font-semibold px-2 py-1 rounded-l`}>
+            <span className={`absolute top-3 right-0 ${badgColor} text-xs font-semibold px-2 py-1 rounded-l`}>
                 {company.verifiedCompany}
-            </span>}
-            {user.userType === 'employer' && myCompany && (
-                <span className={`absolute top-3 right-0 bg-gray-700 text-white text-xs font-semibold px-2 py-1 rounded-l`}>
-                    Your Job
-                </span>
-            )}
+            </span>
             <Link to={`/${user.userType}/companies/${company._id}`}>
                 <div className="flex flex-col items-center">
                     <img
@@ -47,4 +36,4 @@ function CompanyCard({ company }) {
     );
 }
 
-export default CompanyCard;
+export default EmployerCompanyCard;

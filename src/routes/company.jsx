@@ -5,6 +5,7 @@ import { SkeletonCard } from '@/myComponents/SkeletonCard';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { toast } from '@/hooks/use-toast';
+import useThemeStyle from '@/myHooks/useThemeStyle';
 
 function Company(props) {
     const { user } = useSelector(state => state.user);
@@ -14,6 +15,7 @@ function Company(props) {
     const [badgColor, setBadgColor] = useState('');
     const [myCompany, setMyCompany] = useState(false);
     const navigate = useNavigate();
+    const themeStyle = useThemeStyle();
     useEffect(() => {
         if (!loading) {
             if (company.verifiedCompany == 'approved') setBadgColor('bg-green-200 text-green-700')
@@ -36,9 +38,8 @@ function Company(props) {
                 description: `${response?.data?.data?.name} has ${verification === 'approve' ? 'approved' : 'rejected'} to publish`,
                 style: { backgroundColor: '#90ee90', color: 'black' },
             });
-            setTimeout(() => {
-                window.location.reload()
-            }, 1200);
+            
+            verification === 'approve' ? setBadgColor('bg-green-200 text-green-700') : setBadgColor('bg-red-200 text-red-600') ;
         } catch (error) {
             console.error(`Error ${verification === 'approve' ? 'approving' : 'rejecting'} company:`, error);
             toast({
@@ -57,7 +58,7 @@ function Company(props) {
                 :
                 <div className=''>
                     <h1 className="text-2xl font-semibold text-center mb-6">{company.name}</h1>
-                    <div className="relative flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12">
+                    <div className={`relative flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12 ${themeStyle}`}>
                         {user.userType === 'admin' && <span className={`absolute top-4 right-0 ${badgColor} text-xs font-semibold px-5 py-2 rounded-l`}>
                             {company.verifiedCompany}
                         </span>}
@@ -70,16 +71,16 @@ function Company(props) {
                                 alt={company.name}
                                 className="w-52 h-52 rounded-full object-cover"
                             />
-                            <h2 className="text-lg font-medium mb-4">{company.name}</h2>
-                            <p className="text-sm text-gray-600">{company.industry}</p>
-                            <p className="text-sm text-gray-600">{company.location}</p>
+                            <h2 className="text-xl pt-3 font-medium mb-4">{company.name}</h2>
+                            <p className="text-lg font-semibold text-gray-500">{company.industry}</p>
+                            <p className="text-lg font-semibold text-gray-500">{company.location}</p>
                         </div>
                         <div className='flex flex-col justify-center items-center gap-5'>
                             <div className="flex flex-col items-center text-center md:text-left  w-full border p-4 rounded-sm ">
-                                <p className="text-sm text-gray-700 pb-2 ">{company.description}</p>
-                                <p className="text-sm text-gray-700 underline self-start">{company.website}</p>
+                                <p className="text-lg font-semibold text-gray-500 pb-2 ">{company.description}</p>
+                                <p className="text-lg font-semibold text-gray-500 underline self-start">{company.website}</p>
                                 {
-                                    user.userType === "employer" && myCompany && <Link to={`/employer/edit_company/${company._id}`} className='self-start bg-blue-600 border mt-2 px-7 py-1 rounded' >edit</Link>
+                                    user.userType === "employer" && myCompany && <Link to={`/employer/edit_company/${company._id}`} className='mt-4 self-start bg-blue-600 border mt-2 px-7 py-1 rounded' >edit</Link>
                                 }
                             </div>
                             {user.userType === 'admin' &&
