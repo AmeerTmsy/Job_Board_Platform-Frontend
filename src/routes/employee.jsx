@@ -23,7 +23,7 @@ function Employee(props) {
                         <img
                             src={user.profileImage}
                             alt={user.name}
-                            className="w-52 h-52 rounded-full "
+                            className="w-52 h-52 rounded-full object-cover"
                         />
                         <h2 className="text-lg font-medium mb-4">{user.name}</h2>
                         <p className="text-lg font-semibold text-gray-500">{user.email}</p>
