@@ -6,23 +6,37 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { toast } from '@/hooks/use-toast';
 import useThemeStyle from '@/myHooks/useThemeStyle';
+import CompnayJobCard from '@/myComponents/compnayJobCard';
 
 function Company(props) {
     const { user } = useSelector(state => state.user);
     const { employerCompanies } = useSelector(state => state.employerCompanies);
     const { id } = useParams()
-    const [company, loading, error] = useFetchDataDetail(`companies/${id}`);
+
     const [badgColor, setBadgColor] = useState('');
     const [myCompany, setMyCompany] = useState(false);
+    const [companyJobsUrl, setCompanyJobsUrl] = useState('');
     const navigate = useNavigate();
     const themeStyle = useThemeStyle();
+    const [approverdJobs, setApproverdJobs] = useState(false);
+
+    const [company, loading, error] = useFetchDataDetail(`companies/${id}`);
+    const [companyJobs, jobsLoading, jobsError] = useFetchDataDetail(companyJobsUrl)
+
+
     useEffect(() => {
         if (!loading) {
             if (company.verifiedCompany == 'approved') setBadgColor('bg-green-200 text-green-700')
             if (company.verifiedCompany == 'rejected') setBadgColor('bg-red-200 text-red-600')
             if (company.verifiedCompany == 'pending') setBadgColor('bg-yellow-200 text-yellow-700')
         }
-    }, [company, loading]);
+        if (company) setCompanyJobsUrl(`jobs?company=${company._id}&verifiedJob=approved`)
+
+        if(companyJobs) {
+            setApproverdJobs(companyJobs.some(job => job.verifiedJob === 'approved'))
+            console.log(approverdJobs)
+        }
+    }, [company, loading, companyJobs, jobsLoading]);
 
     useEffect(() => {
         company && setMyCompany(employerCompanies.some(item => item._id === company._id))
@@ -38,8 +52,8 @@ function Company(props) {
                 description: `${response?.data?.data?.name} has ${verification === 'approve' ? 'approved' : 'rejected'} to publish`,
                 style: { backgroundColor: '#90ee90', color: 'black' },
             });
-            
-            verification === 'approve' ? setBadgColor('bg-green-200 text-green-700') : setBadgColor('bg-red-200 text-red-600') ;
+
+            verification === 'approve' ? setBadgColor('bg-green-200 text-green-700') : setBadgColor('bg-red-200 text-red-600');
         } catch (error) {
             console.error(`Error ${verification === 'approve' ? 'approving' : 'rejecting'} company:`, error);
             toast({
@@ -93,6 +107,22 @@ function Company(props) {
                     </div>
                 </div>
             }
+            <div>
+                <hr className={`my-5 ${themeStyle}`} />
+                <h3 className='text-xl font-bold p-3 px-5 pb-8'>Company's listed Jobs</h3>
+                <div className='flex flex-row justify-center items-center'>
+                    <div className={`grid ${approverdJobs ? 'lg:grid-cols-2' : 'lg:grid-cols-1'} grid-cols-1 gap-6 justify-items-center`}>
+                        {companyJobs && companyJobs.some(job => job?.company?._id === company?._id) ?
+                            companyJobs.map(job => job?.company?._id === company?._id && <CompnayJobCard key={job._id} job={job} />)
+                            :
+                            <div className="">
+                                <p>not any approved jobs</p>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

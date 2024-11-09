@@ -34,6 +34,7 @@ import VerifiedEmployer from './verified/VerifiedEmployer';
 import VerifiedAdmin from './verified/VerifiedAdmin';
 import EmployerJobEdit from './routes/employerJobEdit';
 import { Toaster } from './components/ui/toaster';
+import AppliedJobs from './routes/appliedJobs';
 
 const router = createBrowserRouter([
   {
@@ -81,6 +82,10 @@ const router = createBrowserRouter([
           {
             path: "saved_jobs",
             element: <SavedJobs />,
+          },
+          {
+            path: "applied_jobs",
+            element: <AppliedJobs />,
           },
         ]
       },

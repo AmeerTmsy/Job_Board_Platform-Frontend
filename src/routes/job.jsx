@@ -152,7 +152,7 @@ function Job(props) {
             }
             {user.userType === 'employer' && myJob && <div>
                 <hr className={`my-5 ${themeStyle}`} />
-                <h3 className='text-xl font-bold'>Applications</h3>
+                <h3 className='text-xl font-bold pl-3'>Applications</h3>
                 <Applications job={job} />
             </div>}
         </div>

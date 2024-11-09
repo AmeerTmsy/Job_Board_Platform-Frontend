@@ -13,7 +13,7 @@ function Account(props) {
     const navigate = useNavigate()
     const { user, isLoggedIn } = useSelector(state => state.user);
     const myUserType = user.userType
-    
+
     const themeStyle = useThemeStyle();
 
 
@@ -80,8 +80,13 @@ function Account(props) {
                 }
                 <hr className='mt-5 border' />
                 {myUserType === 'employee' ?
-                    <div className={`flex flex-row justify-center items-center p-3 border-2 mt-4 rounded ${themeStyle}`}>
-                        <p className='underline'><Link to={`/employee/saved_jobs`}>see your saved jobs</Link></p>
+                    <div>
+                        <div className={`flex flex-row justify-center items-center p-3 border-2 mt-4 rounded ${themeStyle}`}>
+                            <p className='underline'><Link to={`/employee/saved_jobs`}>see your saved jobs</Link></p>
+                        </div>
+                        <div className={`flex flex-row justify-center items-center p-3 border-2 mt-4 rounded ${themeStyle}`}>
+                            <p className='underline'><Link to={`/employee/applied_jobs`}>see applied jobs</Link></p>
+                        </div>
                     </div>
                     :
                     <div>
