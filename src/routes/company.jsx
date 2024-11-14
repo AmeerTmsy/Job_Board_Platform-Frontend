@@ -14,6 +14,7 @@ function Company(props) {
     const { id } = useParams()
 
     const [badgColor, setBadgColor] = useState('');
+    const [badgeText, setBadgeText] = useState('')
     const [myCompany, setMyCompany] = useState(false);
     const [companyJobsUrl, setCompanyJobsUrl] = useState('');
     const navigate = useNavigate();
@@ -39,7 +40,8 @@ function Company(props) {
     }, [company, loading, companyJobs, jobsLoading]);
 
     useEffect(() => {
-        company && setMyCompany(employerCompanies.some(item => item._id === company._id))
+        company && setMyCompany(employerCompanies.some(item => item._id === company._id));
+        company && setBadgeText(company.verifiedCompany)
     }, [employerCompanies, company])
 
     const companyVerification = async (verification) => {
@@ -52,8 +54,8 @@ function Company(props) {
                 description: `${response?.data?.data?.name} has ${verification === 'approve' ? 'approved' : 'rejected'} to publish`,
                 style: { backgroundColor: '#90ee90', color: 'black' },
             });
-
             verification === 'approve' ? setBadgColor('bg-green-200 text-green-700') : setBadgColor('bg-red-200 text-red-600');
+            verification === 'approve' ? setBadgeText('approved') : setBadgeText('rejected');
         } catch (error) {
             console.error(`Error ${verification === 'approve' ? 'approving' : 'rejecting'} company:`, error);
             toast({
@@ -74,7 +76,7 @@ function Company(props) {
                     <h1 className="text-2xl font-semibold text-center mb-6">{company.name}</h1>
                     <div className={`relative flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12 ${themeStyle}`}>
                         {user.userType === 'admin' && <span className={`absolute top-4 right-0 ${badgColor} text-xs font-semibold px-5 py-2 rounded-l`}>
-                            {company.verifiedCompany}
+                            {badgeText}
                         </span>}
                         {user.userType === 'employer' && myCompany && <span className={`absolute top-2 right-0 bg-gray-700 text-white text-xs font-semibold px-5 py-2 rounded-l`}>
                             {'Your Job'}
