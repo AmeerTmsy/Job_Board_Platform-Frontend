@@ -47,12 +47,7 @@ function StorNSdata(props) {
     useEffect(() => {
         bringNessessity();
     }, [user]);
-    if (user?.userType === 'admin') return null;
-    return (
-        <div className='pt-20'>
-
-        </div>
-    );
+    return null;
 }
 
 export default StorNSdata;

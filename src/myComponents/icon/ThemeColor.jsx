@@ -29,7 +29,7 @@ function ThemeColor() {
         <Button
           variant="outline"
           size="icon"
-          className={`${buttonStyles} border transition-colors duration-300 rounded-full focus:border-none !w-5 !h-5 mt-1 mr-1`}
+          className={`${buttonStyles} border transition-colors duration-300 rounded-full focus:border-none !w-10 !h-10`}
         >
           {currentTheme !== "dark" ? (
             <Sun className="h-[1.2rem] w-[1.2rem] transition-all text-black" />
