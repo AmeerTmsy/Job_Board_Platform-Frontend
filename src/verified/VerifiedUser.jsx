@@ -1,23 +1,9 @@
-import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
-function VerifiedUser(props) {
-    const navigate = useNavigate()
+export default function VerifiedUser() {
     const { user, isLoggedIn } = useSelector(state => state.user);
-
-    useEffect(() => {
-        if (!isLoggedIn) navigate('/login')
-        if (isLoggedIn && user.userType !== "employee") navigate('/')
-    }, [user, isLoggedIn]);
-
-    return (
-        <div>
-            {
-                isLoggedIn && (user.userType === 'employee') && <Outlet />
-            }
-        </div>
-    );
+    if (!isLoggedIn) return <Navigate to="/login" replace />;
+    if (user?.userType !== 'employee') return <Navigate to="/" replace />;
+    return <Outlet />;
 }
-
-export default VerifiedUser;

@@ -9,7 +9,9 @@ import {
 import { ThemeProvider } from 'next-themes';
 import { Provider } from 'react-redux';
 
-import Root, { loader as rootLoader } from "./routes/root";
+import Root from "./routes/root";
+import axios from "axios";
+import { createSessionLoader } from "./auth/sessionLoader";
 import ErrorPage from "./error-page";
 import Jobs from "./routes/jobs";
 import Login from "./routes/login";
@@ -35,6 +37,12 @@ import VerifiedAdmin from './verified/VerifiedAdmin';
 import EmployerJobEdit from './routes/employerJobEdit';
 import { Toaster } from './components/ui/toaster';
 import AppliedJobs from './routes/appliedJobs';
+
+const rootLoader = createSessionLoader({
+  client: axios,
+  dispatch: store.dispatch,
+  baseUrl: import.meta.env.VITE_API_BASE_URL,
+});
 
 const router = createBrowserRouter([
   {

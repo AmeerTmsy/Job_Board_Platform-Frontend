@@ -1,44 +1,26 @@
-import { useEffect } from 'react';
-import { Outlet, useLoaderData } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { Outlet, useLoaderData, useRevalidator } from 'react-router-dom';
 import Header from '@/myComponents/Header';
 import Footer from '@/myComponents/Footer';
-import axios from 'axios';
-import { authenticatUser } from '@/redux/slices/userSlice';
 import StorNSdata from '@/verified/storNSdata';
 
-export async function loader() {
-    const url = `${import.meta.env.VITE_API_BASE_URL}/user/auth/verify`;
-    let login = false;
-    let userData = {};
-    await axios.get(url, { withCredentials: true })
-        .then(response => {
-            userData = response?.data?.data || {}
-            login = true;
-        })
-        .catch(error => console.log("error:", error?.response?.data?.message));
-    return { userData, login };
-}
-
-function Root() {
-    const loaderData = useLoaderData();
-    const login = loaderData?.login || false;
-
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (login) dispatch(authenticatUser(loaderData.userData));
-    }, [login, loaderData, dispatch]);
-
-
+export default function Root() {
+    const { sessionError } = useLoaderData();
+    const revalidator = useRevalidator();
     return (
         <div className="app-shell">
             <Header />
-            <StorNSdata />
-            <Outlet />
+            {sessionError ? (
+                <main className="job-detail-page">
+                    <section className="empty-jobs" role="alert">
+                        <h1>We couldn’t check your session.</h1>
+                        <p>Please check your connection and try again.</p>
+                        <button className="primary-link" disabled={revalidator.state === 'loading'} onClick={() => revalidator.revalidate()}>
+                            {revalidator.state === 'loading' ? 'Checking…' : 'Try again'}
+                        </button>
+                    </section>
+                </main>
+            ) : <><StorNSdata /><Outlet /></>}
             <Footer />
         </div>
     );
 }
-
-export default Root;
