@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRight, Pencil, Mail, BriefcaseBusiness, LogOut, Bookmark, Send, Building2, WifiOff } from 'lucide-react';
 import axios from 'axios';
 import { toast } from '@/hooks/use-toast';
-import { unAuthenticatUser } from '@/redux/slices/userSlice';
+import { logoutSession } from '@/auth/logout';
 import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
 import AccountLayout from '@/myComponents/AccountLayout';
@@ -18,7 +18,7 @@ export default function Account() {
     const profile = user.userType === 'admin' ? user : account;
     const logout = async () => {
         setLoggingOut(true);
-        try { await axios.get(`${import.meta.env.VITE_API_BASE_URL}/${user.userType === 'employer' ? 'employer' : 'user'}/auth/logout`, { withCredentials: true }); dispatch(unAuthenticatUser()); window.location.assign('/'); }
+        try { await logoutSession({ client: axios, dispatch, baseUrl: import.meta.env.VITE_API_BASE_URL, userType: user.userType, navigate: path => window.location.assign(path) }); }
         catch { toast({ description: 'Unable to log out. Please try again.', variant: 'destructive' }); setLoggingOut(false); }
     };
     const employee = user.userType === 'employee';

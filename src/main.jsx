@@ -31,6 +31,7 @@ import SavedJobs from './routes/savedJobs';
 import SignUp from './routes/signUp';
 import store from './redux/store'
 import VerifiedUser from './verified/VerifiedUser';
+import VerifiedGuest from './verified/VerifiedGuest';
 import Companies from './routes/companies';
 import VerifiedEmployer from './verified/VerifiedEmployer';
 import VerifiedAdmin from './verified/VerifiedAdmin';
@@ -56,12 +57,11 @@ const router = createBrowserRouter([
         element: <Jobs />,
       },
       {
-        path: "/login",
-        element: <Login />,
-      },
-      {
-        path: "/sign_up",
-        element: <SignUp />,
+        element: <VerifiedGuest />,
+        children: [
+          { path: '/login', element: <Login /> },
+          { path: '/sign_up', element: <SignUp /> },
+        ],
       },
       {
         path: "/jobs/:id",

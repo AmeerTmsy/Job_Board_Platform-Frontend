@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthRoleContext } from "./AuthRoleContext";
 import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
@@ -16,6 +17,7 @@ import { authenticatUser, unAuthenticatUser } from "@/redux/slices/userSlice";
 
 export default function AuthForm({ signup = false }) {
   const dispatch = useDispatch();
+  const roleContext = useContext(AuthRoleContext);
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState("");
   const {
@@ -85,12 +87,12 @@ export default function AuthForm({ signup = false }) {
         <legend>{signup ? "I’m here to" : "Log in as"}</legend>
         <div className="role-options">
           <label>
-            <input type="radio" value="employee" {...register("userType")} />
+            <input type="radio" value="employee" {...register("userType", { onChange: event => roleContext?.setRole(event.target.value) })} />
             <BriefcaseBusiness size={18} />
             <span>Find a job</span>
           </label>
           <label>
-            <input type="radio" value="employer" {...register("userType")} />
+            <input type="radio" value="employer" {...register("userType", { onChange: event => roleContext?.setRole(event.target.value) })} />
             <Users size={18} />
             <span>Hire talent</span>
           </label>
