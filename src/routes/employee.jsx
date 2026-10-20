@@ -1,42 +1,18 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, ArrowUpRight, BriefcaseBusiness, Mail, UserRound, WifiOff } from 'lucide-react';
 import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
-import useThemeStyle from '@/myHooks/useThemeStyle';
+import ProfileAvatar from '@/myComponents/ProfileAvatar';
 
-function Employee(props) {
-    const { id } = useParams()
-    const [user, loading, error] = useFetchDataDetail(`users/${id}`);
-    const themeStyle = useThemeStyle();
-
-    return (
-        <div className="flex flex-col w-full h-full p-6">
-            <h1 className="text-2xl font-semibold text-center mb-6">Employee Information</h1>
-
-            {loading !== false ?
-                <div className={`flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12 ${themeStyle}`}>
-                    <SkeletonCard />
-                </div>
-                :
-                <div className={`flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12 ${themeStyle}`}>
-                    <div className="w-full md:w-1/2 p-4 border-b md:border-b-0 md:border-r border-gray-300 flex flex-col justify-center items-center">
-                        <img
-                            src={user.profileImage}
-                            alt={user.name}
-                            className="w-52 h-52 rounded-full object-cover"
-                        />
-                        <h2 className="text-lg font-medium mb-4">{user.name}</h2>
-                        <p className="text-lg font-semibold text-gray-500">{user.email}</p>
-                        <p className="text-lg font-semibold text-gray-500">{user.experienced} year experience</p>
-                    </div>
-                    <div className="flex flex-col items-center text-center md:text-left  w-1/2 p-4">
-                        <h3 className="text-lg font-semibold mb-2">{user.profession}</h3>
-                        <p className="text-lg font-semibold text-gray-500">{user.bio}</p>
-                    </div>
-                </div>
-            }
-        </div>
-    );
+export default function Employee() {
+    const { id } = useParams();
+    const [employee, loading, error] = useFetchDataDetail(`users/${id}`);
+    const hasExperience = employee?.experienced !== undefined && employee?.experienced !== null && employee?.experienced !== '';
+    return <main className="job-detail-page talent-detail-page"><Link className="back-link" to="/employer/employees"><ArrowLeft size={16} />Back to candidates</Link>
+        {loading ? <section className="detail-panel detail-loading" aria-label="Loading candidate"><SkeletonCard /></section> : error || !employee ? <section className="empty-jobs"><WifiOff size={32} /><h1>This profile couldn’t be loaded.</h1><p>{error || 'Please try again in a moment.'}</p><Link className="primary-link" to="/employer/employees">Explore other candidates</Link></section> : <>
+        <section className="profile-panel candidate-profile"><div className="profile-cover" aria-hidden="true"><span>FRESH PERSPECTIVES. NEW POSSIBILITIES.</span><span>✳ ↗</span></div><div className="profile-panel-body"><div className="profile-top"><ProfileAvatar profile={employee} />{employee.email && <a className="primary-link" href={`mailto:${encodeURIComponent(employee.email)}`}>Get in touch <ArrowUpRight size={17} /></a>}</div><span className="eyebrow candidate-eyebrow">MEET YOUR NEXT TEAMMATE</span><h1>{employee.name || 'Candidate profile'}</h1><p className="profile-profession">{employee.profession || 'Profession not provided'}</p><div className="profile-contact"><span><BriefcaseBusiness size={15} />{hasExperience ? `${employee.experienced} ${Number(employee.experienced) === 1 ? 'year' : 'years'} of experience` : 'Experience not provided'}</span>{employee.email && <span><Mail size={15} />{employee.email}</span>}</div></div></section>
+        <div className="detail-columns"><div><section className="detail-panel"><span className="eyebrow">THE PERSON BEHIND THE PROFILE</span><h2>Meet {employee.name || 'your next teammate'}.</h2><p className="job-description">{employee.bio || 'This candidate hasn’t added an introduction yet.'}</p></section><div className="candidate-note"><UserRound size={25} strokeWidth={1.3} /><p>A new perspective can change everything.<br /><strong>Find the people who move your team forward.</strong></p></div></div><aside className="detail-panel company-overview"><span className="eyebrow">AT A GLANCE</span><h2>Candidate snapshot</h2><dl><div><dt>Profession</dt><dd>{employee.profession || 'Not provided'}</dd></div><div><dt>Experience</dt><dd>{hasExperience ? `${employee.experienced} ${Number(employee.experienced) === 1 ? 'year' : 'years'}` : 'Not provided'}</dd></div><div><dt>Email address</dt><dd>{employee.email ? <a href={`mailto:${encodeURIComponent(employee.email)}`}>{employee.email} <ArrowUpRight size={14} /></a> : 'Not provided'}</dd></div></dl><p className="candidate-contact-note">{employee.email ? 'Start a conversation about what comes next for your team.' : 'This candidate hasn’t added contact details yet.'}</p>{employee.email && <a className="primary-link" href={`mailto:${encodeURIComponent(employee.email)}`}><Mail size={16} />Email candidate</a>}</aside></div>
+        <div className="candidate-footer"><p>Great teams start with the right people.</p><Link className="outline-action" to="/employer/employees">Keep exploring <ArrowUpRight size={16} /></Link></div>
+        </>}
+    </main>;
 }
-
-export default Employee;

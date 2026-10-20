@@ -1,25 +1,17 @@
-import useThemeStyle from '@/myHooks/useThemeStyle';
-import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { ArrowUpRight, BriefcaseBusiness } from 'lucide-react';
+import ProfileAvatar from './ProfileAvatar';
 
-function EmployeeCard({employee}) {
-    const themeStyle = useThemeStyle();
-    return (
-        <div className={`border p-4 rounded-lg shadow-sm ${themeStyle}`}>
-            <Link to={`/employer/employees/${employee._id}`}>
-                <div className="flex flex-col items-center">
-                    <img
-                        src={employee.profileImage}
-                        alt={employee.name}
-                        className="w-28 h-28 rounded-full object-cover mb-4"
-                    />
-                    <h2 className="text-lg font-medium">{employee.name}</h2>
-                    <p className="text-md font-semibold text-gray-500">{employee.profession}</p>
-                    <p className="text-md font-semibold text-gray-500">{employee.experienced} year experience</p>
-                </div>
-            </Link>
-        </div>
-    );
+export default function EmployeeCard({ employee }) {
+    const experience = employee.experienced;
+    const hasExperience = experience !== undefined && experience !== null && experience !== '';
+    return <article className="talent-card">
+        <div className="talent-card-top"><ProfileAvatar profile={employee} /><span className="talent-card-symbol" aria-hidden="true">↗</span></div>
+        <h2><Link to={`/employer/employees/${employee._id}`}>{employee.name || 'Candidate'}</Link></h2>
+        <p className="talent-profession">{employee.profession || 'Profession not provided'}</p>
+        <p className="talent-bio">{employee.bio || 'Get to know this candidate by exploring their profile.'}</p>
+        <div className="talent-card-bottom"><span><BriefcaseBusiness size={14} />{hasExperience ? `${experience} ${Number(experience) === 1 ? 'year' : 'years'} of experience` : 'Experience not provided'}</span><Link to={`/employer/employees/${employee._id}`} aria-label={`View ${employee.name || 'candidate'}’s profile`}>View profile <ArrowUpRight size={16} /></Link></div>
+    </article>;
 }
-
-export default EmployeeCard;
+EmployeeCard.propTypes = { employee: PropTypes.object.isRequired };

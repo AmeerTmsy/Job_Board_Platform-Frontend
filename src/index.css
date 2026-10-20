@@ -415,3 +415,47 @@ h2 { letter-spacing: -1px; }
 .dark .application-submitted { background: #2d442f; color: #c3d6b1; }
 @media (max-width: 1000px) { .account-page { padding: 30px; grid-template-columns: 190px minmax(0,1fr); gap: 25px; } .account-jobs-grid { grid-template-columns: 1fr; } .account-shortcuts { gap: 12px; } .account-shortcuts > a { padding: 22px; } }
 @media (max-width: 700px) { .account-page { display: flex; flex-direction: column; padding: 25px 20px 40px; gap: 25px; } .account-sidebar { position: static; width: 100%; } .sidebar-profile, .sidebar-note { display: none; } .account-sidebar nav { flex-direction: row; gap: 6px; padding: 0 0 18px; border-bottom: 1px solid hsl(var(--border)); flex-wrap: wrap; } .account-sidebar nav a { font-size: 11px; padding: 10px; gap: 7px; } .account-sidebar nav a svg { width: 16px; } .account-content { width: 100%; } .account-page-heading h1 { font-size: 33px; } .profile-panel-body { padding: 0 22px 25px; } .profile-cover { padding: 22px 22px 38px; } .profile-cover > span:first-child { max-width: 190px; line-height: 1.8; } .account-shortcuts { grid-template-columns: 1fr; } .account-session { align-items: flex-start; } .account-session .outline-action { flex-shrink: 0; } .profile-photo-edit { gap: 15px; align-items: flex-start; } .profile-photo-edit .profile-avatar { width: 65px; height: 65px; font-size: 22px; } .profile-edit-form .auth-field-row { grid-template-columns: 1fr; gap: 20px; } .application-card { padding: 20px; } .application-card-header { flex-wrap: wrap; } .application-submitted { margin-left: 53px; } .application-card-bottom { align-items: flex-end; } .collection-toolbar { flex-wrap: wrap; } }
+
+/* Talent discovery and candidate profiles. */
+.talent-hero { grid-template-columns: 1.5fr 1fr; gap: 50px; }
+.talent-hero h1 { font-size: clamp(35px,4.1vw,53px); }
+.talent-art { background: #e7e5d9; color: #4f5940; border-radius: 14px; padding: 30px; transform: rotate(-3deg); }
+.talent-art > .eyebrow { font-size: 8px; color: #767b65; }
+.talent-art-people { display: flex; align-items: center; padding: 27px 0; }
+.talent-art-people > span { width: 78px; height: 78px; display: grid; place-items: center; border-radius: 50%; background: #d3b789; font-size: 60px; line-height: 1; }
+.talent-art-people > span:nth-child(2) { background: #f9f7eb; margin-left: -10px; z-index: 1; }
+.talent-art-people > span:nth-child(3) { background: #becda9; margin-left: -10px; }
+.talent-art > strong { display: block; font-size: 33px; line-height: 1.14; font-weight: 500; letter-spacing: -1px; }
+.talent-controls { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; margin: 25px 0; }
+.talent-controls .category-tabs { margin: 0; }
+.talent-card { display: flex; flex-direction: column; min-width: 0; padding: 25px; border: 1px solid hsl(var(--border)); border-radius: 12px; background: hsl(var(--card)); transition: transform .2s, border-color .2s, box-shadow .2s; }
+.talent-card:hover { transform: translateY(-3px); border-color: #93a783; box-shadow: 0 10px 25px #263b2510; }
+.talent-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+.talent-card .profile-avatar { width: 61px; height: 61px; font-size: 20px; }
+.talent-card:nth-child(3n + 2) .profile-avatar { background: #eae1d5; color: #806345; }
+.talent-card:nth-child(3n + 3) .profile-avatar { background: #e5e0ef; color: #78638c; }
+.talent-card-symbol { color: #87997a; font-size: 27px; font-weight: 300; }
+.talent-card h2 { font-size: 21px; font-weight: 600; letter-spacing: -.6px; overflow-wrap: anywhere; }
+.talent-profession { font-size: 12px; color: hsl(var(--muted-foreground)); margin: 7px 0 17px; }
+.talent-bio { font-size: 12px; line-height: 1.85; color: hsl(var(--muted-foreground)); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 25px; }
+.talent-card-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid hsl(var(--border)); padding-top: 18px; margin-top: auto; font-size: 10px; }
+.talent-card-bottom > span { display: inline-flex; align-items: center; gap: 5px; color: hsl(var(--muted-foreground)); }
+.talent-card-bottom > a { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
+.candidate-profile .profile-top > .primary-link { margin-top: 40px; }
+.candidate-eyebrow { margin-top: 20px; font-size: 9px; }
+.candidate-profile h1 { font-size: clamp(30px,3.5vw,40px); line-height: 1.2; font-weight: 600; letter-spacing: -1.4px; margin: 12px 0 9px; overflow-wrap: anywhere; }
+.candidate-profile .profile-cover > span:last-child { font-size: 54px; }
+.candidate-note { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding: 24px; border-radius: 10px; background: #e9eddf; color: #60744f; }
+.candidate-note p { font-size: 12px; line-height: 1.9; }
+.candidate-note strong { font-weight: 500; }
+.candidate-note > svg { flex-shrink: 0; }
+.candidate-contact-note { font-size: 12px; line-height: 1.8; color: hsl(var(--muted-foreground)); margin: 20px 0; }
+.talent-detail-page .company-overview > .primary-link { width: 100%; }
+.candidate-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; border-top: 1px solid hsl(var(--border)); padding-top: 25px; margin-top: 30px; }
+.candidate-footer p { font-size: 12px; color: hsl(var(--muted-foreground)); }
+.dark .talent-art { background: #353c2f; color: #e4e9d9; }
+.dark .talent-art > .eyebrow { color: #a9b49a; }
+.dark .talent-art-people { color: #4f5940; }
+.dark .candidate-note { background: #293e2d; color: #b6c8a7; }
+@media (max-width: 950px) { .talent-hero { gap: 30px; } .talent-art { padding: 24px; } .talent-art-people > span { width: 66px; height: 66px; } .talent-art > strong { font-size: 30px; } }
+@media (max-width: 700px) { .talent-hero { grid-template-columns: 1fr; } .talent-hero h1 { font-size: 38px; } .talent-art { transform: none; } .talent-controls { gap: 18px; } .talent-controls .industry-filter { width: 100%; } .talent-card { padding: 24px; } .candidate-profile .profile-top { flex-wrap: wrap; } .candidate-profile .profile-top > .primary-link { margin-top: 33px; } .candidate-profile .profile-cover > span:first-child { max-width: 160px; } .candidate-profile .profile-cover > span:last-child { font-size: 40px; } .candidate-note { padding: 21px; } .candidate-footer { align-items: flex-start; flex-direction: column; } }
