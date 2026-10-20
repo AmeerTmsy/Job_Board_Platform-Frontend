@@ -505,3 +505,16 @@ h2 { letter-spacing: -1px; }
 .company-profile-heading h1 { margin-top: 0; min-width: 0; }
 .company-profile-heading > .company-status { flex-shrink: 0; }
 .detail-hero-top > .company-status { flex-shrink: 0; }
+
+/* Gentle, distinct moderation actions with clear inactive states. */
+.moderation-button { display: inline-flex; justify-content: center; align-items: center; padding: 13px 19px; border: 1px solid transparent; border-radius: 7px; font-size: 13px; font-weight: 600; line-height: 1.5; }
+.moderation-approve { background: #e2efdf; border-color: #bfd6b8; color: #39633b; }
+.moderation-reject { background: #f9e4e2; border-color: #e8bdb8; color: #9b4541; }
+.moderation-approve:hover:not(:disabled) { background: #d2e6cd; border-color: #9cb995; }
+.moderation-reject:hover:not(:disabled) { background: #f2d2ce; border-color: #d69f99; }
+.moderation-button:disabled { opacity: .5; cursor: not-allowed; }
+.moderation-actions[aria-busy="true"] .moderation-button { cursor: wait; }
+.dark .moderation-approve { background: #304b35; border-color: #4b6e48; color: #c5dfbb; }
+.dark .moderation-reject { background: #4c3030; border-color: #704843; color: #edb9b3; }
+.dark .moderation-approve:hover:not(:disabled) { background: #3a583d; }
+.dark .moderation-reject:hover:not(:disabled) { background: #5b3937; }
