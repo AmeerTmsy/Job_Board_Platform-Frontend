@@ -499,3 +499,9 @@ h2 { letter-spacing: -1px; }
 .dark .status-approved { background: #29452e; color: #bdddb3; }
 .dark .status-pending { background: #483d24; color: #ecd399; }
 .dark .status-rejected { background: #4b2e2e; color: #efb5af; }
+
+/* Keep company verification with the company name, clear of the cover overlap. */
+.company-profile-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; margin-top: 18px; }
+.company-profile-heading h1 { margin-top: 0; min-width: 0; }
+.company-profile-heading > .company-status { flex-shrink: 0; }
+.detail-hero-top > .company-status { flex-shrink: 0; }

@@ -21,19 +21,10 @@ function Job() {
 
     const [job, loading, error] = useFetchDataDetail(`jobs/${id}`);
 
-    const [badgColor, setBadgColor] = useState('');
     const [saveJobBadgColor, setSaveJobBadgColor] = useState('');
     const [badgeText, setBadgeText] = useState('')
     const [myJob, setMyJob] = useState(false);
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (!loading && job) {
-            if (job.verifiedJob == 'approved') setBadgColor('bg-green-200 text-green-700')
-            if (job.verifiedJob == 'rejected') setBadgColor('bg-red-200 text-red-600')
-            if (job.verifiedJob == 'pending') setBadgColor('bg-yellow-200 text-yellow-700')
-        }
-    }, [job, loading]);
 
     const companyVerification = async (verification) => {
 
@@ -47,7 +38,6 @@ function Job() {
                 style: { backgroundColor: '#90ee90', color: 'black' },
             });
 
-            verification === 'approve' ? setBadgColor('bg-green-200 text-green-700') : setBadgColor('bg-red-200 text-red-600');
             verification === 'approve' ? setBadgeText('approved') : setBadgeText('rejected')
         } catch (error) {
             console.error("Error approving job:", error);
@@ -90,7 +80,7 @@ function Job() {
     return <main className="job-detail-page">
         {isLoading && <UploadAlert />}<Link className="back-link" to="/"><ArrowLeft size={16} /> Back to opportunities</Link>
         {loading ? <section className="detail-panel detail-loading" aria-label="Loading job"><SkeletonCard /></section> : error || !job ? <section className="empty-jobs"><WifiOff size={32} /><h1>This opportunity couldn’t be loaded.</h1><p>{error || 'Please try again in a moment.'}</p><Link className="primary-link" to="/">Explore other opportunities</Link></section> : <>
-        <section className="detail-hero"><div className="detail-hero-top"><span className="company-monogram">{(job.company?.name || 'H').slice(0, 2).toUpperCase()}</span><div><span className="eyebrow">YOUR NEXT CHAPTER</span><p>{job.company?.name || 'Company'}</p></div>{user?.userType === 'employee' && <button className={`outline-action ${saveJobBadgColor}`} onClick={manageJobSave} aria-pressed={saveJobBadgColor === 'text-red-500'}><Bookmark size={17} fill={saveJobBadgColor === 'text-red-500' ? 'currentColor' : 'none'} />{saveJobBadgColor === 'text-red-500' ? 'Saved' : 'Save role'}</button>}{user?.userType === 'admin' && <span className={`job-tag ${badgColor}`}>{badgeText}</span>}{user?.userType === 'employer' && myJob && <span className="job-tag">Your listing</span>}</div><h1>{job.title}</h1><p className="detail-headline">{job.headline}</p><div className="detail-facts"><span><MapPin size={17} />{job.location || 'Location not specified'}</span><span><BriefcaseBusiness size={17} />{job.jobType || 'Type not specified'}</span><span><Banknote size={17} />{job.salary ? `₹${Number(job.salary).toLocaleString('en-IN')}` : 'Salary not specified'}</span></div></section>
+        <section className="detail-hero"><div className="detail-hero-top"><span className="company-monogram">{(job.company?.name || 'H').slice(0, 2).toUpperCase()}</span><div><span className="eyebrow">YOUR NEXT CHAPTER</span><p>{job.company?.name || 'Company'}</p></div>{user?.userType === 'employee' && <button className={`outline-action ${saveJobBadgColor}`} onClick={manageJobSave} aria-pressed={saveJobBadgColor === 'text-red-500'}><Bookmark size={17} fill={saveJobBadgColor === 'text-red-500' ? 'currentColor' : 'none'} />{saveJobBadgColor === 'text-red-500' ? 'Saved' : 'Save role'}</button>}{user?.userType === 'admin' && <span className={`company-status status-${badgeText}`}>{badgeText}</span>}{user?.userType === 'employer' && myJob && <span className="job-tag">Your listing</span>}</div><h1>{job.title}</h1><p className="detail-headline">{job.headline}</p><div className="detail-facts"><span><MapPin size={17} />{job.location || 'Location not specified'}</span><span><BriefcaseBusiness size={17} />{job.jobType || 'Type not specified'}</span><span><Banknote size={17} />{job.salary ? `₹${Number(job.salary).toLocaleString('en-IN')}` : 'Salary not specified'}</span></div></section>
         <div className="detail-columns"><div><section className="detail-panel"><span className="eyebrow">THE OPPORTUNITY</span><h2>Work worth getting excited about.</h2><h3>About the role</h3><p className="job-description">{job.description || 'Contact the hiring team to learn more about this role.'}</p></section><section className="detail-company"><span className="company-monogram"><Building2 size={22} /></span><div><span className="eyebrow">MEET YOUR NEXT TEAM</span><h3>{job.company?.name || 'The hiring team'}</h3><p>A new team. A fresh perspective. Your next possibility.</p></div></section></div>
         <aside className="detail-sidebar"><section className="detail-panel apply-panel"><span className="eyebrow">MAKE YOUR MOVE</span><h2>See yourself here?</h2><p>A great next chapter starts with a first step.</p>{!isLoggedIn ? <><Link to="/login" className="primary-link">Log in to apply <ArrowUpRight size={18} /></Link><p className="apply-signup">New to Hired? <Link to="/sign_up">Create an account ↗</Link></p></> : user?.userType === 'employee' ? <ResumeAttachCard job={job} /> : user?.userType === 'employer' ? myJob ? <Link className="primary-link" to={`/employer/employer_job_edit/${job._id}`}>Edit job information <ArrowUpRight size={18} /></Link> : <p>Applications are open to job seeker accounts.</p> : null}
         {user?.userType === 'admin' && <div className="moderation-actions"><button className="primary-link" onClick={() => companyVerification('approve')}>Approve listing</button><button className="outline-action" onClick={() => companyVerification('reject')}>Reject listing</button></div>}</section><div className="detail-note"><CompassMark /><p>Find work that fits your ambition.<br /><strong>Make your next move a good one.</strong></p></div></aside></div>
