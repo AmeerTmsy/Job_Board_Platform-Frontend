@@ -1,111 +1,29 @@
-import { Toaster } from '@/components/ui/toaster';
-import { toast } from '@/hooks/use-toast';
-import { SkeletonCard } from '@/myComponents/SkeletonCard';
-import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
-import useThemeStyle from '@/myHooks/useThemeStyle';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { ArrowUpRight, Pencil, Mail, BriefcaseBusiness, LogOut, Bookmark, Send, Building2, WifiOff } from 'lucide-react';
 import axios from 'axios';
-import { useTheme } from 'next-themes';
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-
-function Account(props) {
-    const navigate = useNavigate()
-    const { user, isLoggedIn } = useSelector(state => state.user);
-    const myUserType = user.userType
-
-    const themeStyle = useThemeStyle();
-
-
-    const [myAccountData, loading, error] = useFetchDataDetail(myUserType === 'employee' ? `users/${user.id}` : `employers/${user.id}`)
-
-    const url = `${import.meta.env.VITE_API_BASE_URL}/user/auth/logout`;
-    const handlLogout = async () => {
-        await axios.get(url, { withCredentials: true })
-            .then(response => {
-                console.log(response);
-                toast({
-                    description: "Logout successful",
-                    style: { backgroundColor: '#90ee90', color: 'black' },
-                });
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1200);
-            })
-            .catch(error => {
-                console.log(error);
-                toast({
-                    description: "Logout faild",
-                    style: { backgroundColor: '#ff5151', color: 'black' },
-                });
-            })
-    }
-    const handlEdit = () => navigate(`/${myUserType}/account_edit`)
-
-    return (
-        <div>
-            <Toaster />
-            <div className={`flex flex-col w-full h-full p-6`}>
-                {/* Employee Information Heading */}
-                <h1 className="text-2xl font-semibold text-center mb-6">Your Account Information</h1>
-
-                {/* Employee Profile */}
-                {loading ?
-                    <div className={`flex flex-col md:flex-row items-center justify-center border p-6 rounded shadow-sm space-y-6 md:space-y-0 md:space-x-12  ${themeStyle}`}>
-                        <SkeletonCard />
-                    </div>
-                    :
-                    <div className={`flex flex-col md:flex-row items-center justify-center border p-6 rounded shadow-sm space-y-6 md:space-y-0 md:space-x-12  ${themeStyle}`}>
-                        {/* Left side - Profile image, name, and contact info */}
-                        <div className="flex flex-col items-center w-1/2 border-b md:border-b-0 md:border-r border-gray-400 py-5">
-                            <img
-                                src={myAccountData.profileImage}
-                                alt={myAccountData.name}
-                                className="w-52 h-52 rounded-full object-cover"
-                            />
-                            <h2 className="text-lg font-medium mb-4">{myAccountData.name}</h2>
-                            <p className="text-sm font-semibold text-gray-500 tracking-wide">{myAccountData.email}</p>
-                            <div className='flex flex-row justify-between gap-2 pt-3'>
-                                {user.userType !== 'admin' && <button onClick={handlEdit} className=' px-7 border rounded-sm bg-blue-600 hover:bg-blend-lighten'>Edit</button>}
-                                <button onClick={handlLogout} className=' px-5 border rounded-sm bg-red-500 hover:bg-blend-lighten'>Logout</button>
-                            </div>
-                        </div>
-
-                        {/* Right side - Role and description */}
-                        <div className={`flex flex-col items-center text-center md:text-left  w-2/2 md:w-1/2  ${themeStyle}`}>
-                            <h3 className="text-lg font-semibold mb-2">{myAccountData.profession}</h3>
-                            <p className="text-sm font-semibold text-gray-500 tracking-wide">{myAccountData.bio}</p>
-                        </div>
-                    </div>
-                }
-                <hr className='mt-5 border' />
-                {myUserType === 'employee' ?
-                    <div>
-                        <div className={`flex flex-row justify-center items-center p-3 border-2 mt-4 rounded ${themeStyle}`}>
-                            <p className='underline'><Link to={`/employee/saved_jobs`}>see your saved jobs</Link></p>
-                        </div>
-                        <div className={`flex flex-row justify-center items-center p-3 border-2 mt-4 rounded ${themeStyle}`}>
-                            <p className='underline'><Link to={`/employee/applied_jobs`}>see applied jobs</Link></p>
-                        </div>
-                    </div>
-                    :
-                    <div>
-                        {myUserType === 'employer' ?
-                            <div>
-                                <div className={`flex flex-row justify-center items-center p-3 border-2 mt-4 rounded ${themeStyle}`}>
-                                    <p className='underline'><Link to={`/employer/employer_jobs_listed`}>see jobs listed by you</Link></p>
-                                </div>
-                                <div className={`flex flex-row justify-center items-center p-3 border-2 mt-4 rounded ${themeStyle}`}>
-                                    <p className='underline'><Link to={`/employer/my_companies`}>see your compnaies</Link></p>
-                                </div>
-                            </div>
-                            : ""
-                        }
-                    </div>
-                }
-            </div>
-        </div>
-    );
+import { toast } from '@/hooks/use-toast';
+import { unAuthenticatUser } from '@/redux/slices/userSlice';
+import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
+import { SkeletonCard } from '@/myComponents/SkeletonCard';
+import AccountLayout from '@/myComponents/AccountLayout';
+import ProfileAvatar from '@/myComponents/ProfileAvatar';
+export default function Account() {
+    const { user } = useSelector(state => state.user);
+    const dispatch = useDispatch();
+    const [loggingOut, setLoggingOut] = useState(false);
+    const [account, loading, error] = useFetchDataDetail(`${user.userType === 'employee' ? 'users' : 'employers'}/${user.id || user._id}`);
+    const profile = user.userType === 'admin' ? user : account;
+    const logout = async () => {
+        setLoggingOut(true);
+        try { await axios.get(`${import.meta.env.VITE_API_BASE_URL}/${user.userType === 'employer' ? 'employer' : 'user'}/auth/logout`, { withCredentials: true }); dispatch(unAuthenticatUser()); window.location.assign('/'); }
+        catch { toast({ description: 'Unable to log out. Please try again.', variant: 'destructive' }); setLoggingOut(false); }
+    };
+    const employee = user.userType === 'employee';
+    return <AccountLayout eyebrow="YOUR SPACE TO GROW" title="A little more you." description="Your story, your experience, and everything that comes next.">
+        {loading && user.userType !== 'admin' ? <section className="detail-panel detail-loading" aria-label="Loading account"><SkeletonCard /></section> : !profile || error && user.userType !== 'admin' ? <div className="empty-jobs"><WifiOff size={30} /><h2>We couldn’t load your profile.</h2><p>Please try again in a moment.</p></div> : <><section className="profile-panel"><div className="profile-cover" aria-hidden="true"><span>YOUR NEXT CHAPTER IS YOURS TO WRITE.</span><span>✳</span></div><div className="profile-panel-body"><div className="profile-top"><ProfileAvatar profile={profile} />{user.userType !== 'admin' && <Link className="outline-action" to={`/${user.userType}/account_edit`}><Pencil size={15} />Edit profile</Link>}</div><h2>{profile.name}</h2><p className="profile-profession">{profile.profession || 'Add your profession to tell your story.'}</p><div className="profile-contact"><span><Mail size={15} />{profile.email}</span>{profile.experienced !== undefined && profile.experienced !== null && <span><BriefcaseBusiness size={15} />{profile.experienced} {Number(profile.experienced) === 1 ? 'year' : 'years'} of experience</span>}</div></div></section><section className="detail-panel profile-about"><span className="eyebrow">THE PERSON BEHIND THE PROFILE</span><h2>About me</h2><p className="job-description">{profile.bio || 'What drives you? Add a short introduction to help your next team get to know you.'}</p></section></>}
+        {user.userType !== 'admin' && <div className="account-shortcuts"><Link to={employee ? '/employee/saved_jobs' : '/employer/employer_jobs_listed'}>{employee ? <Bookmark size={22} /> : <BriefcaseBusiness size={22} />}<strong>{employee ? 'Your shortlist' : 'Your job listings'}</strong><p>{employee ? 'Good opportunities, kept close.' : 'Find the people who move you forward.'}</p><span>{employee ? 'View saved jobs' : 'Manage listings'} <ArrowUpRight size={17} /></span></Link><Link to={employee ? '/employee/applied_jobs' : '/employer/my_companies'}>{employee ? <Send size={22} /> : <Building2 size={22} />}<strong>{employee ? 'Your next steps' : 'Your companies'}</strong><p>{employee ? 'Every application is a new possibility.' : 'Give your team a place to shine.'}</p><span>{employee ? 'View applications' : 'Manage companies'} <ArrowUpRight size={17} /></span></Link></div>}
+        <div className="account-session"><p>All done for now? You can pick up here anytime.</p><button className="outline-action" disabled={loggingOut} onClick={logout}><LogOut size={15} />{loggingOut ? 'Logging out…' : 'Log out'}</button></div>
+    </AccountLayout>;
 }
-
-export default Account;

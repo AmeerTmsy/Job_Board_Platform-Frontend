@@ -1,192 +1,44 @@
-import { Toaster } from '@/components/ui/toaster';
-import { toast } from '@/hooks/use-toast';
-import { SkeletonCard } from '@/myComponents/SkeletonCard';
-import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
-import useThemeStyle from '@/myHooks/useThemeStyle';
-import { authenticatUser } from '@/redux/slices/userSlice';
-import axios from 'axios';
-import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-
-function AccountEdit(props) {
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Check, LoaderCircle, WifiOff } from 'lucide-react';
+import axios from 'axios';
+import { toast } from '@/hooks/use-toast';
+import { authenticatUser } from '@/redux/slices/userSlice';
+import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
+import { SkeletonCard } from '@/myComponents/SkeletonCard';
+import AccountLayout from '@/myComponents/AccountLayout';
+import ProfileAvatar from '@/myComponents/ProfileAvatar';
+export default function AccountEdit() {
+    const { user } = useSelector(state => state.user);
+    const [account, loading, error] = useFetchDataDetail(`${user.userType === 'employee' ? 'users' : 'employers'}/${user.id || user._id}`);
+    return <AccountLayout eyebrow="MAKE IT YOURS" title="Tell your story." description="Keep your profile up to date, so the right team can get to know you."><Link className="back-link" to={`/${user.userType}/account`}><ArrowLeft size={15} />Back to profile</Link>{loading ? <div className="detail-panel detail-loading" aria-label="Loading profile editor"><SkeletonCard /></div> : error || !account ? <div className="empty-jobs"><WifiOff size={30} /><h2>We couldn’t load your profile.</h2><p>Please try again in a moment.</p></div> : <ProfileForm key={account._id || user.id} account={account} />}</AccountLayout>;
+}
+function ProfileForm({ account }) {
     const { user } = useSelector(state => state.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const myUserType = user.userType;
-    let [myAccountData, loading, error] = useFetchDataDetail(myUserType === 'employee' ? `users/${user.id}` : `employers/${user.id}`);
-
-    const themeStyle = useThemeStyle();
-
-    const { register, handleSubmit, setValue } = useForm();
-    const [isEditing, setIsEditing] = useState({
-        name: false, email: false, profession: false, experienced: false, bio: false,
-    });
-
-    const handleFormSubmit = async (data) => {
-        const formData = new FormData();
-        const updatedData = { ...myAccountData, ...data };
-
-        formData.append('name', updatedData.name);
-        formData.append('email', updatedData.email);
-        formData.append('profession', updatedData.profession);
-        formData.append('experienced', updatedData.experienced);
-        formData.append('bio', updatedData.bio);
-        console.log(formData);
-
-
-        if (data.profileImage?.[0]) {
-            formData.append('profileImage', data.profileImage[0]);
-        }
-
-        const url = `${import.meta.env.VITE_API_BASE_URL}/${myUserType === 'employee' ? 'users' : 'employers'}/${user.id}`;
+    const [serverError, setServerError] = useState('');
+    const [preview, setPreview] = useState(null);
+    const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm({ defaultValues: { name: account.name || '', email: account.email || '', profession: account.profession || '', experienced: account.experienced ?? '', bio: account.bio || '' } });
+    const image = watch('profileImage')?.[0];
+    useEffect(() => { if (!image) { setPreview(null); return; } const url = URL.createObjectURL(image); setPreview(url); return () => URL.revokeObjectURL(url); }, [image]);
+    const save = async data => {
+        setServerError('');
+        const form = new FormData();
+        for (const field of ['name', 'email', 'profession', 'experienced', 'bio']) form.append(field, data[field]);
+        if (data.profileImage?.[0]) form.append('profileImage', data.profileImage[0]);
         try {
-            toast({
-                description: `Your info is saving...`,
-                style: {
-                    backgroundColor: '#00fff2',
-                    color: 'black'
-                }
-            })
-            await axios.patch(url, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-                withCredentials: true,
-            }).then((response) => {
-                console.log(response?.data);
-                dispatch(authenticatUser(response?.data?.data));
-                toast({
-                    description: "Changes saved, reload page",
-                    style: { backgroundColor: '#90ee90', color: 'black' },
-                });
-            });
-        } catch (error) {
-            console.error(error);
-            toast({
-                description: "Unable to save update, please reload the page",
-                style: { backgroundColor: '#ff5151', color: 'black' },
-            });
-        }
-        setIsEditing({
-            name: false, email: false, profession: false, experienced: false, bio: false, profileImage: false,
-        });
-        setTimeout(() => {
-            window.location.reload();
-        }, 1200);
+            const response = await axios.patch(`${import.meta.env.VITE_API_BASE_URL}/${user.userType === 'employee' ? 'users' : 'employers'}/${user.id || user._id}`, form, { withCredentials: true });
+            const updated = response?.data?.data || {};
+            dispatch(authenticatUser({ id: user.id || updated._id, userType: user.userType, name: updated.name || data.name, email: updated.email || data.email, profileImage: updated.profileImage || account.profileImage }));
+            toast({ description: 'Your profile is up to date.' });
+            navigate(`/${user.userType}/account`);
+        } catch (error) { setServerError(error?.response?.data?.message || 'We couldn’t save your changes. Please try again.'); }
     };
-
-    const enableEdit = (field) => {
-        setIsEditing({ ...isEditing, [field]: true });
-    };
-
-    return (
-        <form onSubmit={handleSubmit(handleFormSubmit)} className={`max-w-3xl mx-auto p-6 pt-10 mt-10 shadow-xl border-t rounded-lg ${themeStyle}`} >
-            <Toaster />
-            {
-                loading ?
-                    <div className='flex flex-col items-center'>
-                        < h2 className="text-2xl font-semibold mb-4 text-center" > Edit Fields Are Loading</h2>
-                        <SkeletonCard />
-                    </div >
-                    :
-                    <div>
-                        <h2 className="text-2xl font-semibold mb-4 text-center">Click the Fields to Edit</h2>
-
-                        <div className="flex items-start justify-between space-x-8">
-                            <div className="w-1/3">
-                                {isEditing.profileImage ? (
-                                    <>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            // onChange={(e) => uploadImage(e.target.files[0])}
-                                            {...register("profileImage")}  // Register it as 'profileImage' in react-hook-form
-                                            className="block w-full mt-2 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                                        />
-
-                                    </>
-                                ) : (
-                                    <img
-                                        src={myAccountData.profileImage}
-                                        alt="User profile"
-                                        className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                                        onClick={() => enableEdit('profileImage')}
-                                    />
-                                )}
-
-                                {isEditing.name ? (
-                                    <input
-                                        {...register('name')}
-                                        defaultValue={myAccountData.name}
-                                        className="block w-full px-3 py-2 border  rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                                    />
-                                ) : (
-                                    <p className={`text-center  text-2xl font-normal`} onClick={() => enableEdit('name')}>
-                                        {myAccountData.name}
-                                    </p>
-                                )}
-
-                                {isEditing.email ? (
-                                    <input
-                                        {...register('email')}
-                                        defaultValue={myAccountData.email}
-                                        className="block w-full mt-2 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                                    />
-                                ) : (
-                                    <p className="text-center text-gray-500 text-lg font-semibold" onClick={() => enableEdit('email')}>
-                                        {myAccountData.email}
-                                    </p>
-                                )}
-
-                                {isEditing.experienced ? (
-                                    <input
-                                        {...register('experienced')}
-                                        defaultValue={myAccountData.experienced}
-                                        className="block w-full mt-2 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                                    />
-                                ) : (
-                                    <p className="text-center text-gray-v mt-2 text-md" onClick={() => enableEdit('experienced')}>
-                                        {myAccountData.experienced} year experienced
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="w-2/3">
-                                {isEditing.profession ? (
-                                    <input
-                                        {...register('profession')}
-                                        defaultValue={myAccountData.profession}
-                                        className="block mb-3 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                                    />
-                                ) : (
-                                    <h3 className="font-semibold mb-2 " onClick={() => enableEdit('profession')}>{myAccountData.profession}</h3>
-
-                                )}
-                                {isEditing.bio ? (
-                                    <textarea
-                                        {...register('bio')}
-                                        defaultValue={myAccountData.bio}
-                                        className="block w-full h-48 px-3 py-2 border rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                                    />
-                                ) : (
-                                    <p className="text-gray-500 text-lg font-semibold" onClick={() => enableEdit('bio')}>
-                                        {myAccountData.bio}
-                                    </p>
-                                )}
-
-                                <button
-                                    type="submit"
-                                    className="w-full mt-4 bg-blue-400 text-white py-2 rounded-md hover:bg-blue-500 transition duration-200"
-                                >
-                                    Update Changes
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-            }
-        </form >
-    );
+    const field = (name, label, type = 'text', options = {}) => <div className="auth-field"><label htmlFor={`profile-${name}`}>{label}</label><input id={`profile-${name}`} type={type} aria-invalid={Boolean(errors[name])} aria-describedby={errors[name] ? `profile-error-${name}` : undefined} {...register(name, options)} />{errors[name] && <span id={`profile-error-${name}`} role="alert" className="field-error">{errors[name].message}</span>}</div>;
+    return <form className="detail-panel profile-edit-form" onSubmit={handleSubmit(save)} noValidate><div className="profile-photo-edit"><ProfileAvatar profile={{ ...account, profileImage: preview || account.profileImage }} /><div><label htmlFor="profile-image">Profile photo</label><p>A familiar face makes a great first impression.</p><input id="profile-image" type="file" accept="image/*" aria-describedby={errors.profileImage ? 'profile-error-image' : undefined} {...register('profileImage', { validate: files => !files?.[0] || files[0].type.startsWith('image/') || 'Choose an image file.' })} />{errors.profileImage && <span id="profile-error-image" className="field-error" role="alert">{errors.profileImage.message}</span>}</div></div><div className="profile-edit-section"><span className="eyebrow">THE BASICS</span><h2>Your introduction</h2><div className="auth-field-row">{field('name', 'Full name', 'text', { required: 'Enter your name.', maxLength: { value: 25, message: 'Use 25 characters or fewer.' } })}{field('email', 'Email address', 'email', { required: 'Enter your email address.', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Enter a valid email address.' } })}</div><div className="auth-field-row">{field('profession', 'Profession')}{field('experienced', 'Years of experience', 'number', { min: { value: 0, message: 'Enter zero or more years.' } })}</div></div><div className="profile-edit-section"><span className="eyebrow">A LITTLE MORE YOU</span><h2>About yourself</h2><div className="auth-field"><label htmlFor="profile-bio">Bio</label><textarea id="profile-bio" rows={5} placeholder="Share your experience, what inspires you, and where you want to go next…" {...register('bio')} /></div></div>{serverError && <div className="auth-error" role="alert">{serverError}</div>}<div className="profile-form-actions"><Link className="outline-action" to={`/${user.userType}/account`}>Cancel</Link><button type="submit" className="primary-link" disabled={isSubmitting}>{isSubmitting ? <LoaderCircle size={16} className="animate-spin" /> : <Check size={16} />}{isSubmitting ? 'Saving…' : 'Save changes'}</button></div></form>;
 }
-
-export default AccountEdit;
+ProfileForm.propTypes = { account: PropTypes.object.isRequired };
