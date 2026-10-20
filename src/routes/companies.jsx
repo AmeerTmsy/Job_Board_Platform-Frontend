@@ -1,75 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Building2, SearchX, WifiOff, ArrowUpRight } from 'lucide-react';
 import CompanyCard from '@/myComponents/CompanyCard';
 import { useFetchList } from '@/myHooks/fetchList';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
-import { useSelector } from 'react-redux';
 import SearchBar from '@/myComponents/searchBar';
-
-function Companies(props) {
-
-    const { user, isLoggedIn } = useSelector(state => state.user);
-    const myUserType = user.userType;
-    const [urlParam, setUrlParam] = useState('')
-
-    const bringData = async (companiesVerificaion) => {
-        if (companiesVerificaion === 'approved') {
-            setUrlParam("?verifiedCompany=approved");
-        } else if (companiesVerificaion === 'pending') {
-            setUrlParam("?verifiedCompany=pending");
-        } else if (companiesVerificaion === 'rejected') {
-            setUrlParam("?verifiedCompany=rejected");
-        } else {
-            setUrlParam("");
-        }
-    }
-
-
-    const finalUrl = `${user.userType === 'admin' ? urlParam : `?verifiedCompany=approved${urlParam ? `&${urlParam.slice(1)}` : ''}`}`
-    const [companies, loading, error] = useFetchList(`companies${finalUrl}`);
-
-
-    useEffect(() => {
-        console.log("urlParam: ", urlParam)
-    }, [urlParam]);
-    return (
-        <div className="flex flex-col w-full h-full p-6">
-            <div>
-                <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
-                    <h1 className="text-2xl font-semibold p-3 sm:p-0">Listed Companies</h1>
-                    <div>
-                        <SearchBar field='Company' setUrlParam={setUrlParam} />
-                    </div>
-                </div>
-                {myUserType === 'admin' && <div className='flex flex-row justify-center md:justify-end py-5'>
-                    <button onClick={() => bringData("all")} className="bg-gray-200 w-20 hover:shadow-md rounded-l text-black">all</button>
-                    <button onClick={() => bringData("approved")} className="bg-green-200 w-20 hover:shadow-md text-green-700">approved</button>
-                    <button onClick={() => bringData("pending")} className="bg-yellow-200 w-20 hover:shadow-md text-yellow-600">pending</button>
-                    <button onClick={() => bringData("rejected")} className="bg-red-200 w-20 hover:shadow-md rounded-r text-red-600">regected</button>
-                </div>}
-            </div>
-            {loading === true ?
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {Array.from({ length: 6 }).map((_, index) => (
-                        <div key={index} className=" p-4 rounded-lg shadow-sm flex flex-row justify-center">
-                            <SkeletonCard key={index} />
-                        </div>
-                    ))}
-                </div>
-                :
-                <div>
-                    {error === 'Jobs not found' ?
-                        <div className='flex flex-col sm:flex-row justify-center items-center p-4'> not any companies </div>
-                        :
-                        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {companies.map((company, index) => (
-                                <CompanyCard key={index} company={company} />
-                            ))}
-                        </div>
-                    }
-                </div>
-            }
-        </div>
-    );
+export default function Companies() {
+    const { user } = useSelector(state => state.user);
+    const [search, setSearch] = useState('');
+    const [status, setStatus] = useState('all');
+    const [industry, setIndustry] = useState('All industries');
+    const params = new URLSearchParams(search);
+    if (user?.userType !== 'admin') params.set('verifiedCompany', 'approved');
+    else if (status !== 'all') params.set('verifiedCompany', status);
+    const [companies, loading, error] = useFetchList(`companies?${params}`);
+    const items = Array.isArray(companies) ? companies : [];
+    const industries = ['All industries', ...new Set(items.map(company => company.industry).filter(Boolean))];
+    const visible = industry === 'All industries' ? items : items.filter(company => company.industry === industry);
+    const notFound = error && /not found|no companies/i.test(error);
+    return <main className="companies-page"><section className="companies-hero"><div><span className="eyebrow"><span /> GREAT WORK STARTS WITH GREAT PEOPLE</span><h1>Find your people.<br /><em>Build something great.</em></h1><p>Behind every opportunity is a team. Discover the companies<br className="desktop-break" /> shaping what’s next and find where you belong.</p><SearchBar field="Company" setUrlParam={value => { setSearch(value); setIndustry('All industries'); }} /></div><div className="companies-art" aria-hidden="true"><span className="eyebrow">GOOD COMPANY. GREAT POSSIBILITIES.</span><div className="team-symbols"><span>✳</span><span><Building2 size={47} strokeWidth={1.3} /></span><span>↗</span></div><strong>Different teams.<br />Shared ambition.</strong><span className="companies-art-footer">A PLACE TO DO YOUR BEST WORK <ArrowUpRight size={22} /></span></div></section>
+    <section className="companies-directory" aria-labelledby="companies-heading"><div className="section-heading"><div><span className="eyebrow">MEET YOUR NEXT TEAM</span><h2 id="companies-heading">Good company to keep.</h2><p>Explore teams, get inspired, and see what’s possible.</p></div><span className="listing-count">{loading ? 'Discovering teams…' : `${visible.length} companies`}</span></div><div className="company-directory-controls"><div className="category-tabs"><button className="selected" type="button" onClick={() => { setSearch(''); setIndustry('All industries'); setStatus('all'); }}>Explore all <ArrowUpRight size={15} /></button></div><label className="industry-filter">Industry<select value={industry} onChange={event => setIndustry(event.target.value)}>{industries.map(item => <option key={item}>{item}</option>)}</select></label></div>
+    {user?.userType === 'admin' && <div className="category-tabs" aria-label="Company verification filters">{['all', 'approved', 'pending', 'rejected'].map(item => <button key={item} aria-pressed={status === item} onClick={() => { setStatus(item); setIndustry('All industries'); }}>{item}</button>)}</div>}
+    {loading ? <div className="jobs-grid" aria-label="Loading companies">{Array.from({ length: 6 }, (_, index) => <div className="loading-card" key={index}><SkeletonCard /></div>)}</div> : error || !visible.length ? <div className="empty-jobs">{error && !notFound ? <WifiOff size={32} /> : <SearchX size={32} />}<h3>{error && !notFound ? 'We couldn’t load the companies.' : 'Your next team is still out there.'}</h3><p>{error && !notFound ? 'Please try again in a moment.' : 'Try another search or explore all industries.'}</p><button className="primary-link" onClick={() => { setSearch(''); setIndustry('All industries'); setStatus('all'); }}>Explore all companies</button></div> : <div className="jobs-grid">{visible.map(company => <CompanyCard key={company._id} company={company} />)}</div>}</section></main>;
 }
-
-export default Companies;

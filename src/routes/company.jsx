@@ -1,132 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
-import { SkeletonCard } from '@/myComponents/SkeletonCard';
+import { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { ArrowLeft, ArrowUpRight, MapPin, Building2, Globe, BriefcaseBusiness, WifiOff } from 'lucide-react';
 import axios from 'axios';
 import { toast } from '@/hooks/use-toast';
-import useThemeStyle from '@/myHooks/useThemeStyle';
-import CompnayJobCard from '@/myComponents/compnayJobCard';
-
-function Company(props) {
+import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
+import { useFetchList } from '@/myHooks/fetchList';
+import { SkeletonCard } from '@/myComponents/SkeletonCard';
+import CompanyLogo from '@/myComponents/CompanyLogo';
+import JobCard from '@/myComponents/JobCard';
+export default function Company() {
     const { user } = useSelector(state => state.user);
     const { employerCompanies } = useSelector(state => state.employerCompanies);
-    const { id } = useParams()
-
-    const [badgColor, setBadgColor] = useState('');
-    const [badgeText, setBadgeText] = useState('')
-    const [myCompany, setMyCompany] = useState(false);
-    const [companyJobsUrl, setCompanyJobsUrl] = useState('');
-    const navigate = useNavigate();
-    const themeStyle = useThemeStyle();
-    const [approverdJobs, setApproverdJobs] = useState(false);
-
+    const { id } = useParams();
     const [company, loading, error] = useFetchDataDetail(`companies/${id}`);
-    const [companyJobs, jobsLoading, jobsError] = useFetchDataDetail(companyJobsUrl)
-
-
-    useEffect(() => {
-        if (!loading) {
-            if (company.verifiedCompany == 'approved') setBadgColor('bg-green-200 text-green-700')
-            if (company.verifiedCompany == 'rejected') setBadgColor('bg-red-200 text-red-600')
-            if (company.verifiedCompany == 'pending') setBadgColor('bg-yellow-200 text-yellow-700')
-        }
-        if (company) setCompanyJobsUrl(`jobs?company=${company._id}&verifiedJob=approved`)
-
-        if(companyJobs) {
-            setApproverdJobs(companyJobs.some(job => job.verifiedJob === 'approved'))
-            console.log(approverdJobs)
-        }
-    }, [company, loading, companyJobs, jobsLoading]);
-
-    useEffect(() => {
-        company && setMyCompany(employerCompanies.some(item => item._id === company._id));
-        company && setBadgeText(company.verifiedCompany)
-    }, [employerCompanies, company])
-
-    const companyVerification = async (verification) => {
-        console.log(verification);
-        try {
-            const url = `${import.meta.env.VITE_API_BASE_URL}/companies/${company._id}`;
-            const response = await axios.patch(url, { verifiedCompany: verification === 'approve' ? 'approved' : 'rejected' }, { withCredentials: true });
-            console.log("Company updated:", response);
-            toast({
-                description: `${response?.data?.data?.name} has ${verification === 'approve' ? 'approved' : 'rejected'} to publish`,
-                style: { backgroundColor: '#90ee90', color: 'black' },
-            });
-            verification === 'approve' ? setBadgColor('bg-green-200 text-green-700') : setBadgColor('bg-red-200 text-red-600');
-            verification === 'approve' ? setBadgeText('approved') : setBadgeText('rejected');
-        } catch (error) {
-            console.error(`Error ${verification === 'approve' ? 'approving' : 'rejecting'} company:`, error);
-            toast({
-                description: `Unable to ${verification === 'approve' ? 'approved' : 'rejected'}, please try again in a while`,
-                style: { backgroundColor: '#ff5151', color: 'black' },
-            });
-        }
-    }
-
-    return (
-        <div className="flex flex-col w-full h-full p-6">
-            {loading !== false ?
-                <div className="flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12">
-                    <SkeletonCard />
-                </div>
-                :
-                <div className=''>
-                    <h1 className="text-2xl font-semibold text-center mb-6">{company.name}</h1>
-                    <div className={`relative flex flex-col md:flex-row items-center justify-center border p-6 rounded-lg shadow-sm space-y-6 md:space-y-0 md:space-x-12 ${themeStyle}`}>
-                        {user.userType === 'admin' && <span className={`absolute top-4 right-0 ${badgColor} text-xs font-semibold px-5 py-2 rounded-l`}>
-                            {badgeText}
-                        </span>}
-                        {user.userType === 'employer' && myCompany && <span className={`absolute top-2 right-0 bg-gray-700 text-white text-xs font-semibold px-5 py-2 rounded-l`}>
-                            {'Your Job'}
-                        </span>}
-                        <div className="flex flex-col items-center w-1/2">
-                            <img
-                                src={company.logo}
-                                alt={company.name}
-                                className="w-52 h-52 rounded-full object-cover"
-                            />
-                            <h2 className="text-xl pt-3 font-medium mb-4">{company.name}</h2>
-                            <p className="text-lg font-semibold text-gray-500">{company.industry}</p>
-                            <p className="text-lg font-semibold text-gray-500">{company.location}</p>
-                        </div>
-                        <div className='flex flex-col justify-center items-center gap-5'>
-                            <div className="flex flex-col items-center text-center md:text-left  w-full border p-4 rounded-sm ">
-                                <p className="text-lg font-semibold text-gray-500 pb-2 ">{company.description}</p>
-                                <p className="text-lg font-semibold text-gray-500 underline self-start">{company.website}</p>
-                                {
-                                    user.userType === "employer" && myCompany && <Link to={`/employer/edit_company/${company._id}`} className='mt-4 self-start bg-blue-600 border mt-2 px-7 py-1 rounded' >edit</Link>
-                                }
-                            </div>
-                            {user.userType === 'admin' &&
-                                <div className='flex flex-row gap-3'>
-                                    <button onClick={() => companyVerification("approve")} className="bg-green-200 w-20  hover:shadow-md rounded-l-full text-green-800 focus:shadow-inner border border-r-4 border-gray-800">approved</button>
-                                    <button onClick={() => companyVerification("regect")} className="bg-red-200 w-20 hover:shadow-md rounded-r-full text-red-600 focus:shadow-inner border border-l-4 border-gray-800">regected</button>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
-            <div>
-                <hr className={`my-5 ${themeStyle}`} />
-                <h3 className='text-xl font-bold p-3 px-5 pb-8'>Company's listed Jobs</h3>
-                <div className='flex flex-row justify-center items-center'>
-                    <div className={`grid ${approverdJobs ? 'lg:grid-cols-2' : 'lg:grid-cols-1'} grid-cols-1 gap-6 justify-items-center`}>
-                        {companyJobs && companyJobs.some(job => job?.company?._id === company?._id) ?
-                            companyJobs.map(job => job?.company?._id === company?._id && <CompnayJobCard key={job._id} job={job} />)
-                            :
-                            <div className="">
-                                <p>not any approved jobs</p>
-                            </div>
-                        }
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+    const [companyJobs, jobsLoading, jobsError] = useFetchList(company?._id ? `jobs?company=${encodeURIComponent(company._id)}&verifiedJob=approved` : null);
+    const [moderation, setModeration] = useState(null);
+    const [updating, setUpdating] = useState(false);
+    const mine = employerCompanies.some(item => item._id === company?._id);
+    const status = moderation && moderation.id === id ? moderation.status : company?.verifiedCompany;
+    const jobs = (Array.isArray(companyJobs) ? companyJobs : []).filter(job => (job.company?._id || job.company) === company?._id && job.verifiedJob === 'approved');
+    let website = null;
+    try { const url = new URL(company?.website?.includes('://') ? company.website : `https://${company?.website || ''}`); if (['https:', 'http:'].includes(url.protocol)) website = url; } catch { /* An invalid website is displayed as plain text. */ }
+    const verifyCompany = async verifiedCompany => {
+        setUpdating(true);
+        try { await axios.patch(`${import.meta.env.VITE_API_BASE_URL}/companies/${company._id}`, { verifiedCompany }, { withCredentials: true }); setModeration({ id, status: verifiedCompany }); toast({ description: `Company ${verifiedCompany}.` }); }
+        catch { toast({ description: 'Unable to update the company. Please try again.', variant: 'destructive' }); }
+        finally { setUpdating(false); }
+    };
+    return <main className="job-detail-page company-detail-page"><Link className="back-link" to={`/${user?.userType}/companies`}><ArrowLeft size={16} />Back to companies</Link>{loading ? <section className="detail-panel detail-loading" aria-label="Loading company"><SkeletonCard /></section> : error || !company ? <section className="empty-jobs"><WifiOff size={32} /><h1>This company couldn’t be loaded.</h1><p>{error || 'Please try again in a moment.'}</p><Link className="primary-link" to={`/${user?.userType}/companies`}>Explore companies</Link></section> : <><section className="company-profile-hero"><div className="company-cover" aria-hidden="true"><span>GOOD PEOPLE. BIG POSSIBILITIES.</span><span>✳ ↗</span></div><div className="company-profile-body"><div className="company-profile-top"><CompanyLogo company={company} />{user?.userType === 'admin' ? <span className={`company-status status-${status}`}>{status}</span> : mine && <span className="company-status">Your company</span>}<a href="#company-openings" className="primary-link">Explore open roles <ArrowUpRight size={17} /></a></div><h1>{company.name}</h1><div className="detail-facts"><span><Building2 size={16} />{company.industry || 'Industry not specified'}</span><span><MapPin size={16} />{company.location || 'Location not specified'}</span>{website && <a href={website.href} target="_blank" rel="noopener noreferrer"><Globe size={16} />Visit website <ArrowUpRight size={14} /></a>}</div></div></section>
+    <div className="detail-columns"><section className="detail-panel"><span className="eyebrow">GET TO KNOW THE TEAM</span><h2>Meet {company.name}.</h2><p className="job-description">{company.description || 'This team hasn’t added a description yet. Explore their open roles to learn more.'}</p></section><aside className="detail-panel company-overview"><span className="eyebrow">AT A GLANCE</span><h2>Company snapshot</h2><dl><div><dt>Industry</dt><dd>{company.industry || 'Not specified'}</dd></div><div><dt>Location</dt><dd>{company.location || 'Not specified'}</dd></div><div><dt>Website</dt><dd>{website ? <a href={website.href} target="_blank" rel="noopener noreferrer">{website.hostname} <ArrowUpRight size={14} /></a> : company.website || 'Not provided'}</dd></div></dl>{user?.userType === 'employer' && mine && <Link className="outline-action" to={`/employer/edit_company/${company._id}`}>Edit company <ArrowUpRight size={16} /></Link>}{user?.userType === 'admin' && <div className="moderation-actions"><button disabled={updating} className="primary-link" onClick={() => verifyCompany('approved')}>Approve company</button><button disabled={updating} className="outline-action" onClick={() => verifyCompany('rejected')}>Reject company</button></div>}</aside></div>
+    <section id="company-openings" className="company-openings"><div className="section-heading"><div><span className="eyebrow">YOUR NEXT CHAPTER, HERE</span><h2>Find your place on the team.</h2><p>Explore opportunities at {company.name}.</p></div>{!jobsLoading && !jobsError && <span className="listing-count">{jobs.length} open roles</span>}</div>{jobsLoading ? <div className="jobs-grid" aria-label="Loading company roles">{[0, 1, 2].map(index => <div className="loading-card" key={index}><SkeletonCard /></div>)}</div> : jobs.length ? <div className="jobs-grid">{jobs.map(job => <JobCard key={job._id} job={job} />)}</div> : <div className="empty-jobs"><BriefcaseBusiness size={30} /><h3>{jobsError && !/not found/i.test(jobsError) ? 'We couldn’t load the open roles.' : 'No open roles just yet.'}</h3><p>{jobsError && !/not found/i.test(jobsError) ? 'Please try again in a moment.' : 'Check back for new opportunities, or discover another team.'}</p><Link className="primary-link" to="/">Explore all opportunities <ArrowUpRight size={17} /></Link></div>}</section></>}</main>;
 }
-
-export default Company;
