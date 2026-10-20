@@ -1,13 +1,5 @@
-import React from 'react';
-import SignUpForm from '../myComponents/SignUpForm';
-
-function SignUp(props) {
-    return (
-        <div>
-            <h1 className='font-bold text-4xl text-center p-4'>Sign Up</h1>
-            <SignUpForm />
-        </div>
-    );
+import AuthLayout from '@/myComponents/AuthLayout';
+import SignUpForm from '@/myComponents/SignUpForm';
+export default function SignUp() {
+    return <AuthLayout signup><SignUpForm /></AuthLayout>;
 }
-
-export default SignUp;

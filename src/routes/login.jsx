@@ -1,13 +1,5 @@
-import React from 'react';
-import LoginForm from '../myComponents/LoginForm';
-
-function Login(props) {
-    return (
-        <div>
-            <h1 className='font-bold text-4xl text-center p-4'>Login page</h1>
-            <LoginForm />
-        </div>
-    );
+import AuthLayout from '@/myComponents/AuthLayout';
+import LoginForm from '@/myComponents/LoginForm';
+export default function Login() {
+    return <AuthLayout><LoginForm /></AuthLayout>;
 }
-
-export default Login;

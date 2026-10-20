@@ -5,19 +5,19 @@ import UploadAlert from '@/myComponents/uploadAlert';
 import { useFetchDataDetail } from '@/myHooks/fetchDataDetail';
 import { setEmployeeSavedJobs } from '@/redux/slices/employee/savedJobsSlice';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import Applications from './applications';
-import useThemeStyle from '@/myHooks/useThemeStyle';
+import { ArrowLeft, ArrowUpRight, MapPin, Banknote, BriefcaseBusiness, Bookmark, Building2, WifiOff } from 'lucide-react';
 
-function Job(props) {
+function Job() {
     const { user, isLoggedIn, isLoading } = useSelector(state => state.user);
     const { employeeSavedJobs } = useSelector(state => state.employeeSavedJobs);
     const { employerJobs } = useSelector(state => state.employerJobs);
     const { id } = useParams();
 
-    const themeStyle = useThemeStyle();
+
 
     const [job, loading, error] = useFetchDataDetail(`jobs/${id}`);
 
@@ -28,7 +28,7 @@ function Job(props) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!loading) {
+        if (!loading && job) {
             if (job.verifiedJob == 'approved') setBadgColor('bg-green-200 text-green-700')
             if (job.verifiedJob == 'rejected') setBadgColor('bg-red-200 text-red-600')
             if (job.verifiedJob == 'pending') setBadgColor('bg-yellow-200 text-yellow-700')
@@ -59,9 +59,9 @@ function Job(props) {
     }
 
     useEffect(() => {
-        const isSaved = job ? employeeSavedJobs.some(item => item.jobId._id === job._id) : false
+        const isSaved = job ? employeeSavedJobs.some(item => item.jobId?._id === job._id) : false
         setSaveJobBadgColor(isSaved ? 'text-red-500' : 'text-gray-400');
-    }, [employeeSavedJobs, saveJobBadgColor, job]);
+    }, [employeeSavedJobs, job]);
 
     const manageJobSave = async () => {
 
@@ -87,76 +87,16 @@ function Job(props) {
         job && setBadgeText(job.verifiedJob)
     }, [employerJobs, job])
 
-    return (
-        <div className="max-w-4xl mx-auto mt-10">
-            {isLoading && <UploadAlert />}
-            <h2 className="text-center text-2xl font-bold mb-6">Job Details</h2>
-            {loading ?
-                <div className="w-full flex flex-row justify-center items-center">
-                    <SkeletonCard />
-                </div>
-                :
-                <div className={`relative flex flex-col md:flex-row justify-between border border-gray-300 rounded-lg p-4 mx-2 ${themeStyle}`}>
-                    {user.userType === 'admin' && <span className={`absolute top-4 right-0 ${badgColor} text-xs font-semibold px-5 py-2 rounded-l`}>
-                        {badgeText}
-                    </span>}
-                    {user.userType === 'employer' && myJob && <span className={`absolute top-2 right-0 bg-gray-700 text-white text-xs font-semibold px-5 py-2 rounded-l`}>
-                        {'Your Job'}
-                    </span>}
-                    {user.userType === 'employee' && (
-                        <span className={`absolute top-0 right-0 text-xs font-semibold px-2 py-1 rounded-l`}>
-                            <i onClick={manageJobSave} className={`ri-heart-fill font-normal text-2xl ${saveJobBadgColor} cursor-pointer`}></i>
-                        </span>
-                    )}
-                    <div className="w-full md:w-1/2 p-4 border-b md:border-b-0 md:border-r border-gray-200">
-                        <h3 className="text-lg font-bold mb-2">{job.title}</h3>
-                        <p className="text-gray-500">{job.company.name}</p>
-                        <p className="text-gray-500">Location: {job.location}</p>
-                        <p className="text-gray-500">Job type:{job.jobType}</p>
-                        <p className="text-gray-500 mb-4">Salary: {job.salary}</p>
-                        <hr />
-                        {!isLoggedIn ?
-                            <div className='flex flex-col justify-center items-center h-2/4'>
-                                <p className='mb-5'>Login to apply for the job</p>
-                                <Link to={'/login'} className="bg-blue-100 hover:bg-blue-200 text-blue-600 py-2 px-6 rounded">
-                                    login
-                                </Link>
-                            </div>
-                            :
-                            user.userType === 'employee' && <ResumeAttachCard job={job} />
-
-                        }
-                    </div>
-                    <div className="flex flex-col justify-between items-center w-full md:w-1/2 p-4">
-                        <h3 className="text-lg font-bold mb-4">
-                            {job.headline}
-                        </h3>
-                        <p className="text-gray-500">
-                            {job.description}
-                        </p>
-                        {
-                            user.userType === "employer" &&
-                            myJob &&
-                            <Link to={`/employer/employer_job_edit/${job._id}`} className="bg-blue-400 hover:bg-blue-200 text-blue-50 py-2 px-6 rounded mt-5">
-                                Edit Job Information
-                            </Link>
-                        }
-                        {user.userType === 'admin' &&
-                            <div className='flex flex-row gap-3'>
-                                <button onClick={() => companyVerification("approve")} className="bg-green-200 w-20  hover:shadow-md rounded-l-full text-green-800 focus:shadow-inner border border-r-4 border-gray-800">approved</button>
-                                <button onClick={() => companyVerification("regect")} className="bg-red-200 w-20 hover:shadow-md rounded-r-full text-red-600 focus:shadow-inner border border-l-4 border-gray-800">regected</button>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
-            {user.userType === 'employer' && myJob && <div>
-                <hr className={`my-5 ${themeStyle}`} />
-                <h3 className='text-xl font-bold pl-3'>Applications</h3>
-                <Applications job={job} />
-            </div>}
-        </div>
-    );
+    return <main className="job-detail-page">
+        {isLoading && <UploadAlert />}<Link className="back-link" to="/"><ArrowLeft size={16} /> Back to opportunities</Link>
+        {loading ? <section className="detail-panel detail-loading" aria-label="Loading job"><SkeletonCard /></section> : error || !job ? <section className="empty-jobs"><WifiOff size={32} /><h1>This opportunity couldn’t be loaded.</h1><p>{error || 'Please try again in a moment.'}</p><Link className="primary-link" to="/">Explore other opportunities</Link></section> : <>
+        <section className="detail-hero"><div className="detail-hero-top"><span className="company-monogram">{(job.company?.name || 'H').slice(0, 2).toUpperCase()}</span><div><span className="eyebrow">YOUR NEXT CHAPTER</span><p>{job.company?.name || 'Company'}</p></div>{user?.userType === 'employee' && <button className={`outline-action ${saveJobBadgColor}`} onClick={manageJobSave} aria-pressed={saveJobBadgColor === 'text-red-500'}><Bookmark size={17} fill={saveJobBadgColor === 'text-red-500' ? 'currentColor' : 'none'} />{saveJobBadgColor === 'text-red-500' ? 'Saved' : 'Save role'}</button>}{user?.userType === 'admin' && <span className={`job-tag ${badgColor}`}>{badgeText}</span>}{user?.userType === 'employer' && myJob && <span className="job-tag">Your listing</span>}</div><h1>{job.title}</h1><p className="detail-headline">{job.headline}</p><div className="detail-facts"><span><MapPin size={17} />{job.location || 'Location not specified'}</span><span><BriefcaseBusiness size={17} />{job.jobType || 'Type not specified'}</span><span><Banknote size={17} />{job.salary ? `₹${Number(job.salary).toLocaleString('en-IN')}` : 'Salary not specified'}</span></div></section>
+        <div className="detail-columns"><div><section className="detail-panel"><span className="eyebrow">THE OPPORTUNITY</span><h2>Work worth getting excited about.</h2><h3>About the role</h3><p className="job-description">{job.description || 'Contact the hiring team to learn more about this role.'}</p></section><section className="detail-company"><span className="company-monogram"><Building2 size={22} /></span><div><span className="eyebrow">MEET YOUR NEXT TEAM</span><h3>{job.company?.name || 'The hiring team'}</h3><p>A new team. A fresh perspective. Your next possibility.</p></div></section></div>
+        <aside className="detail-sidebar"><section className="detail-panel apply-panel"><span className="eyebrow">MAKE YOUR MOVE</span><h2>See yourself here?</h2><p>A great next chapter starts with a first step.</p>{!isLoggedIn ? <><Link to="/login" className="primary-link">Log in to apply <ArrowUpRight size={18} /></Link><p className="apply-signup">New to Hired? <Link to="/sign_up">Create an account ↗</Link></p></> : user?.userType === 'employee' ? <ResumeAttachCard job={job} /> : user?.userType === 'employer' ? myJob ? <Link className="primary-link" to={`/employer/employer_job_edit/${job._id}`}>Edit job information <ArrowUpRight size={18} /></Link> : <p>Applications are open to job seeker accounts.</p> : null}
+        {user?.userType === 'admin' && <div className="moderation-actions"><button className="primary-link" onClick={() => companyVerification('approve')}>Approve listing</button><button className="outline-action" onClick={() => companyVerification('reject')}>Reject listing</button></div>}</section><div className="detail-note"><CompassMark /><p>Find work that fits your ambition.<br /><strong>Make your next move a good one.</strong></p></div></aside></div>
+        {user?.userType === 'employer' && myJob && <section className="detail-panel"><span className="eyebrow">YOUR HIRING PIPELINE</span><h2>Applications</h2><Applications job={job} /></section>}
+        </>}
+    </main>;
 }
-
+function CompassMark() { return <BriefcaseBusiness size={25} strokeWidth={1.3} />; }
 export default Job;
