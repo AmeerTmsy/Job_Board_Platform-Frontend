@@ -518,3 +518,6 @@ h2 { letter-spacing: -1px; }
 .dark .moderation-reject { background: #4c3030; border-color: #704843; color: #edb9b3; }
 .dark .moderation-approve:hover:not(:disabled) { background: #3a583d; }
 .dark .moderation-reject:hover:not(:disabled) { background: #5b3937; }
+
+.infinite-scroll { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; min-height: 80px; padding: 22px 0 8px; text-align: center; }
+.infinite-scroll p { display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 12px; color: hsl(var(--muted-foreground)); }
