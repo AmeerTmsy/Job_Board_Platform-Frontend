@@ -35,18 +35,17 @@ export default function Header() {
         <nav className="desktop-navigation" aria-label="Main navigation">{navigation}</nav>
         <div className="header-actions"><ThemeColor />
             {isLoggedIn ? <>
-                {role === 'employer' && <Link className="primary-link header-create" to="/employer/new_job_create"><Plus size={16} />Post a job</Link>}
                 <DropdownMenu><DropdownMenuTrigger asChild><button type="button" className={`header-account ${location.pathname.includes('/account') ? 'account-active' : ''}`} aria-label="Account menu"><span className="account-link">{user?.name?.charAt(0).toUpperCase() || 'A'}</span><ChevronDown size={14} /></button></DropdownMenuTrigger>
                     <DropdownMenuContent className="header-account-menu" align="end" sideOffset={10}>
                         <DropdownMenuLabel><span className="account-menu-name">{user?.name || 'Your account'}</span><span className="account-menu-role">{role === 'admin' ? 'Administrator' : role === 'employer' ? 'Employer' : 'Job seeker'}</span></DropdownMenuLabel><DropdownMenuSeparator />
                         <DropdownMenuItem asChild><Link to={accountPath}><UserRound size={16} />My profile</Link></DropdownMenuItem>
                         {role !== 'admin' && <DropdownMenuItem asChild><Link to={`/${role}/account_edit`}><Pencil size={16} />Edit profile</Link></DropdownMenuItem>}
-                        {role === 'employer' && <><DropdownMenuSeparator /><DropdownMenuItem asChild><Link to="/employer/company_create"><Plus size={16} />Add a company</Link></DropdownMenuItem><DropdownMenuItem asChild><Link to="/employer/companies"><Building2 size={16} />Browse companies</Link></DropdownMenuItem><DropdownMenuItem asChild><Link to="/"><Search size={16} />Browse all jobs</Link></DropdownMenuItem></>}
+                        {role === 'employer' && <><DropdownMenuSeparator /><DropdownMenuItem asChild><Link to="/employer/company_create"><Plus size={16} />Add a company</Link></DropdownMenuItem><DropdownMenuItem asChild><Link to="/employer/new_job_create"><Plus size={16} />Post a job</Link></DropdownMenuItem><DropdownMenuItem asChild><Link to="/employer/companies"><Building2 size={16} />Browse companies</Link></DropdownMenuItem><DropdownMenuItem asChild><Link to="/"><Search size={16} />Browse all jobs</Link></DropdownMenuItem></>}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </> : <><Link className="login-link desktop-auth" to="/login">Log in</Link><Link className="primary-link desktop-auth" to="/sign_up">Get started <ArrowUpRight size={16} /></Link></>}
             <button className="mobile-menu-toggle" type="button" ref={toggle} aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={menuOpen} aria-controls={menuId} onClick={() => setMenuOpen(value => !value)}>{menuOpen ? <X size={22} /> : <Menu size={22} />}</button>
         </div>
-        <nav id={menuId} className="mobile-navigation" aria-label="Mobile navigation" hidden={!menuOpen}>{navigation}{isLoggedIn ? <Link to={accountPath} onClick={closeMenu}>My profile</Link> : <div className="mobile-auth"><Link className="outline-action" to="/login" onClick={closeMenu}>Log in</Link><Link className="primary-link" to="/sign_up" onClick={closeMenu}>Get started <ArrowUpRight size={16} /></Link></div>}{isLoggedIn && role === 'employer' && <Link className="mobile-post-job" to="/employer/new_job_create" onClick={closeMenu}><Plus size={16} />Post a job</Link>}</nav>
+        <nav id={menuId} className="mobile-navigation" aria-label="Mobile navigation" hidden={!menuOpen}>{navigation}{isLoggedIn ? <Link to={accountPath} onClick={closeMenu}>My profile</Link> : <div className="mobile-auth"><Link className="outline-action" to="/login" onClick={closeMenu}>Log in</Link><Link className="primary-link" to="/sign_up" onClick={closeMenu}>Get started <ArrowUpRight size={16} /></Link></div>}</nav>
     </div></header>;
 }
