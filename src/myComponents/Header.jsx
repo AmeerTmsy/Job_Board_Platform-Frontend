@@ -1,43 +1,13 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import { ArrowUpRight, BriefcaseBusiness } from 'lucide-react';
 import ThemeColor from './icon/ThemeColor';
 import { useSelector } from 'react-redux';
 
-function Header(props) {
+export default function Header() {
     const { user, isLoggedIn } = useSelector(state => state.user);
-
-    return (
-        <div>
-            <header className='bg-blue-400 text-white fixed w-full z-50 shadow-md hover:shadow-2xl ease-in-out duration-500'>
-                <div className=' container mx-auto flex flex-row justify-between items-center py-5 px-5 sm:px-3'>
-                    <div>
-                        <h2 className='font-bold text-xl'><Link to={'/'}>Hired</Link></h2>
-                    </div>
-                    <div>
-                        <ul className='flex flex-row justify-between items-center gap-3'>
-
-                            {
-                                isLoggedIn ? <li> <ThemeColor /> </li> : ""
-                            }
-                            <li><Link to={'/'}>jobs</Link></li>
-                            {
-                                isLoggedIn ? <li><Link to={`/${user?.userType}/companies`}>companies</Link></li> : <li><Link to={'/login'}>login</Link></li>
-                            }
-                            {
-                                isLoggedIn ? <li>{user?.userType === 'employer' && <Link to={`/${user?.userType}/employees`}>employees</Link>}</li> : ""
-                            }
-                            {
-                                isLoggedIn ? <li><Link to={`/${user?.userType}/account`}><div className='w-10 h-10 bg-white text-black rounded-full flex justify-center items-center'>{user?.name?.charAt(0).toUpperCase()}</div></Link></li> : ""
-                            }
-                            {
-                                isLoggedIn ? "" : <li> <ThemeColor /> </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </header>
-        </div>
-    );
+    return <header className="site-header"><div className="header-inner">
+        <Link to="/" className="brand" aria-label="Hired home"><span className="brand-mark"><BriefcaseBusiness size={21} /></span>hired<span className="brand-dot">.</span></Link>
+        <nav aria-label="Main navigation"><NavLink to="/" end>Find a job</NavLink>{isLoggedIn && <NavLink to={`/${user?.userType}/companies`}>Companies</NavLink>}{isLoggedIn && user?.userType === 'employer' && <NavLink to="/employer/employees">Talent</NavLink>}</nav>
+        <div className="header-actions"><ThemeColor />{isLoggedIn ? <Link className="account-link" aria-label="Your account" to={`/${user?.userType}/account`}>{user?.name?.charAt(0).toUpperCase() || 'A'}</Link> : <><Link className="login-link" to="/login">Log in</Link><Link className="primary-link" to="/sign_up">Get started <ArrowUpRight size={16} /></Link></>}</div>
+    </div></header>;
 }
-
-export default Header;

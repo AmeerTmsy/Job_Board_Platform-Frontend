@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Outlet, useLoaderData } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import Header from '@/myComponents/Header';
@@ -19,18 +20,19 @@ export async function loader() {
     return { userData, login };
 }
 
-function Root(props) {
+function Root() {
     const loaderData = useLoaderData();
-    const userData = loaderData?.userData || {};
     const login = loaderData?.login || false;
 
     const dispatch = useDispatch();
 
-    if (login) dispatch(authenticatUser(userData))
+    useEffect(() => {
+        if (login) dispatch(authenticatUser(loaderData.userData));
+    }, [login, loaderData, dispatch]);
 
 
     return (
-        <div>
+        <div className="app-shell">
             <Header />
             <StorNSdata />
             <Outlet />

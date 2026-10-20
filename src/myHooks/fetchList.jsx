@@ -1,38 +1,19 @@
 import axios from "axios";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
 export const useFetchList = (url) => {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    if (!url) return [null, false, null];
-
-    if (!url) {
-        setData(null);
-        setIsLoading(false);
-        setError(null);
-        return;
-    }
-
-    const fetchData = async () => {
-        await axios.get(`${import.meta.env.VITE_API_BASE_URL}/${url}`, { withCredentials: true })
-            .then(response => {
-                // console.log("response: ", response)
-                setError(null)
-                setData(response?.data?.data);
-                setIsLoading(false);
-                setError(null);
-            })
-            .catch(error => {
-                console.log(error, "|| Unable to fetch list");
-                setError(error?.response?.data?.message);
-                setIsLoading(false);
-            })
-    }
+    const [isLoading, setIsLoading] = useState(Boolean(url));
     useEffect(() => {
-        fetchData()
+        const controller = new AbortController();
+        setData(null);
+        setError(null);
+        setIsLoading(Boolean(url));
+        if (url) axios.get(`${import.meta.env.VITE_API_BASE_URL}/${url}`, { withCredentials: true, signal: controller.signal })
+            .then(response => { setData(response?.data?.data); setIsLoading(false); })
+            .catch(error => { if (!controller.signal.aborted) { setError(error?.response?.data?.message || 'Unable to load data'); setIsLoading(false); } });
+        return () => controller.abort();
     }, [url]);
-
-    return [data, isLoading, error]
-}
+    return [data, isLoading, error];
+};

@@ -1,37 +1,10 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-
-function SearchBar({ field, setUrlParam }) {
+import { useState } from 'react';
+import PropTypes from 'prop-types';
+import { Search, ArrowRight } from 'lucide-react';
+export default function SearchBar({ field, setUrlParam }) {
     const [inputValue, setInputValue] = useState('');
-
-    const onSubmit = async () => {
-        if (field === 'Job') {
-            setUrlParam(`?searchKey=${inputValue}`)
-        }
-        if (field === 'Company') {
-            setUrlParam(`?searchKey=${inputValue}`)
-        }
-        if (field === 'Employee') {
-            setUrlParam(`?searchKey=${inputValue}`)
-        }
-
-        console.log('search:', inputValue)
-    }
-
-    return (
-        <div className='border-2 rounded-full px-2 py-1 pl-3 bg-slate-100 flex flex-row'>
-            <input
-                className='bg-slate-100 text-black'
-                type="text"
-                name="search"
-                id="search"
-                placeholder={`search ${field}`}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-            />
-            <div onClick={onSubmit} className=' border-l-2 custom-input cursor-pointer'><i className="ri-search-line px-2 focus:outline-slate-100 text-black"></i></div>
-        </div>
-    );
+    return <form className="job-search" onSubmit={event => { event.preventDefault(); setUrlParam(inputValue.trim() ? `?searchKey=${encodeURIComponent(inputValue.trim())}` : ''); }}>
+        <Search size={21} aria-hidden="true" /><input aria-label={`Search ${field}`} placeholder={field === 'Job' ? 'Job title, keyword, or company' : `Search ${field.toLowerCase()}`} value={inputValue} onChange={event => setInputValue(event.target.value)} /><button type="submit">Search <ArrowRight size={17} /></button>
+    </form>;
 }
-
-export default SearchBar;
+SearchBar.propTypes = { field: PropTypes.string.isRequired, setUrlParam: PropTypes.func.isRequired };

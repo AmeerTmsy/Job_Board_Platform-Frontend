@@ -1,7 +1,8 @@
-import useThemeStyle from '@/myHooks/useThemeStyle';
+import { ArrowUpRight, Bookmark, MapPin, Banknote } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { setEmployeeSavedJobs } from '@/redux/slices/employee/savedJobsSlice';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -14,7 +15,7 @@ function JobCard({ job }) {
     const [myJob, setMyJob] = useState(false);
     const dispatch = useDispatch();
 
-    const themeStyle = useThemeStyle();
+
 
     useEffect(() => {
         if (job.verifiedJob === 'approved') setBadgColor('bg-green-200 text-green-700');
@@ -23,13 +24,13 @@ function JobCard({ job }) {
     }, [job]);
 
     useEffect(() => {
-        const isSaved = employeeSavedJobs.some(item => item.jobId._id === job._id);
+        const isSaved = employeeSavedJobs.some(item => item.jobId?._id === job._id);
         setSaveJobColor(isSaved ? 'text-red-500' : 'text-gray-400');
     }, [employeeSavedJobs, saveJobColor, job]);
 
     useEffect(() => {
         setMyJob(employerJobs.some(item => item._id === job._id) ? true : false)
-    }, [employerJobs])
+    }, [employerJobs, job._id])
 
     const manageJobSave = async () => {
         const data = { jobId: job._id, jobTitle: job.title };
@@ -46,33 +47,12 @@ function JobCard({ job }) {
         }
     };
 
-    return (
-        <div className={` relative py-4 sm:px-5 px-10 w-[21rem] sm:w-1/2 rounded-md ease-in-out duration-300 hover:shadow-md ${themeStyle}`}>
-            {user?.userType === 'admin' && (
-                <span className={`absolute top-3 right-0 ${badgColor} text-xs font-semibold px-2 py-1 rounded-l`}>
-                    {job.verifiedJob}
-                </span>
-            )}
-            {user?.userType === 'employee' && (
-                <span className={`absolute top-0 right-0 text-xs font-semibold px-2 py-1 rounded-l`}>
-                    <i onClick={manageJobSave} className={`ri-heart-fill font-normal text-xl ${saveJobColor} cursor-pointer`}></i>
-                </span>
-            )}
-            {user?.userType === 'employer' && myJob && (
-                <span className={`absolute top-3 right-0 bg-gray-700 text-white text-xs font-semibold px-2 py-1 rounded-l`}>
-                    Your Job
-                </span>
-            )}
-
-            <h3 className="text-lg font-bold">{job.title}</h3>
-            <p className="pb-2">Location: {job.location}</p>
-            <hr />
-            <p>Requirement: {job.headline}</p>
-            <p>Starts from: ₹{job.salary}</p>
-            <p>{job.company.name}</p>
-            <Link to={`/jobs/${job._id}`} className="text-blue-400 underline">See more</Link>
-        </div>
-    );
+    return <article className="job-card">
+        <div className="job-card-header"><span className="company-monogram">{(job.company?.name || 'H').slice(0, 2).toUpperCase()}</span><span className="company-name">{job.company?.name || 'Company'}</span>{user?.userType === 'employee' && <button className={`save-job ${saveJobColor}`} aria-label={saveJobColor === 'text-red-500' ? 'Unsave job' : 'Save job'} aria-pressed={saveJobColor === 'text-red-500'} onClick={manageJobSave}><Bookmark size={19} fill={saveJobColor === 'text-red-500' ? 'currentColor' : 'none'} /></button>}</div>
+        <h3><Link to={`/jobs/${job._id}`}>{job.title}</Link></h3><p className="job-headline">{job.headline}</p>
+        <div className="job-meta"><span><MapPin size={15} />{job.location}</span>{job.salary && <span><Banknote size={15} />₹{Number(job.salary).toLocaleString('en-IN')}</span>}</div>
+        <div className="job-card-footer"><span className="job-tag">{user?.userType === 'admin' ? <span className={badgColor}>{job.verifiedJob}</span> : myJob ? 'Your listing' : 'Explore opportunity'}</span><Link to={`/jobs/${job._id}`} className="job-detail-link">View role <ArrowUpRight size={17} /></Link></div>
+    </article>;
 }
-
+JobCard.propTypes = { job: PropTypes.object.isRequired };
 export default JobCard;
