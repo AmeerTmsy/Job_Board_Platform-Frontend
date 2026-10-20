@@ -1,3 +1,4 @@
+import AdminReviewList from '@/myComponents/AdminReviewList';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Building2, SearchX, WifiOff, ArrowUpRight } from 'lucide-react';
@@ -7,6 +8,11 @@ import InfiniteScroll from '@/myComponents/InfiniteScroll';
 import { SkeletonCard } from '@/myComponents/SkeletonCard';
 import SearchBar from '@/myComponents/searchBar';
 export default function Companies() {
+    const { user } = useSelector(state => state.user);
+    return user?.userType === 'admin' ? <AdminReviewList companies /> : <CompanyDiscovery />;
+}
+
+function CompanyDiscovery() {
     const { user } = useSelector(state => state.user);
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState('all');

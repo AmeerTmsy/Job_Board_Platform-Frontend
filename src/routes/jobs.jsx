@@ -1,3 +1,4 @@
+import AdminReviewList from '@/myComponents/AdminReviewList';
 import { useState } from 'react';
 import { ArrowUpRight, Compass, Sparkles, SearchX, WifiOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -9,6 +10,11 @@ import { useSelector } from 'react-redux';
 import SearchBar from '@/myComponents/searchBar';
 
 export default function Jobs() {
+    const { user } = useSelector(state => state.user);
+    return user?.userType === 'admin' ? <AdminReviewList /> : <JobDiscovery />;
+}
+
+function JobDiscovery() {
     const { user } = useSelector(state => state.user);
     const [urlParam, setUrlParam] = useState('');
     const [category, setCategory] = useState('All opportunities');

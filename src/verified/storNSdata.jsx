@@ -47,6 +47,7 @@ function StorNSdata(props) {
     useEffect(() => {
         bringNessessity();
     }, [user]);
+    if (user?.userType === 'admin') return null;
     return (
         <div className='pt-20'>
 

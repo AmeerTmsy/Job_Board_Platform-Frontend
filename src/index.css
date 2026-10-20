@@ -545,3 +545,23 @@ input, textarea, select { transition: border-color 180ms ease, box-shadow 180ms 
   .motion-wait { opacity: 1; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* A concise admin queue, focused on verification. */
+.admin-review-page { width: 100%; max-width: 1280px; margin: 0 auto; padding: 36px 48px 50px; }
+.admin-review-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 25px; }
+.admin-review-heading h1 { font-size: 32px; font-weight: 600; letter-spacing: -1px; margin: 9px 0; }
+.admin-review-heading p { font-size: 13px; color: hsl(var(--muted-foreground)); }
+.admin-review-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 0; margin-bottom: 18px; border-top: 1px solid hsl(var(--border)); }
+.admin-review-toolbar .category-tabs { margin: 0; }
+.admin-review-toolbar .management-search { max-width: 390px; }
+.admin-review-toolbar .management-search button { font-size: 11px; font-weight: 600; }
+.filter-count { font-size: 10px; opacity: .75; font-variant-numeric: tabular-nums; }
+.admin-detail-page .company-profile-top { margin-top: 0; }
+.admin-detail-page .company-profile-body { padding-top: 25px; }
+.admin-detail-page .detail-panel > h2:first-child { margin-top: 0; }
+.admin-footer { padding: 18px 0; }
+@media (max-width: 950px) { .admin-review-page { padding: 30px; } .admin-review-toolbar { align-items: stretch; flex-direction: column; gap: 16px; } .admin-review-toolbar .management-search { max-width: none; } }
+@media (max-width: 700px) { .admin-review-page { padding: 26px 20px 40px; } .admin-review-heading { align-items: flex-start; } .admin-review-toolbar .category-tabs { gap: 7px; } .admin-review-toolbar .category-tabs button { padding: 9px 12px; } }
+.admin-workspace .profile-panel-body { padding-top: 25px; }
+.admin-workspace .profile-top { margin-top: 0; }
+.admin-detail-page .company-overview .moderation-actions { margin-bottom: 20px; }

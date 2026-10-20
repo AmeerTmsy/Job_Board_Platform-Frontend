@@ -44,7 +44,7 @@ function JobCard({ job }) {
         <div className="job-card-header"><span className="company-monogram">{(job.company?.name || 'H').slice(0, 2).toUpperCase()}</span><span className="company-name">{job.company?.name || 'Company'}</span>{user?.userType === 'employee' && <button className={`save-job ${saveJobColor}`} aria-label={saveJobColor === 'text-red-500' ? 'Unsave job' : 'Save job'} aria-pressed={saveJobColor === 'text-red-500'} onClick={manageJobSave}><Bookmark size={19} fill={saveJobColor === 'text-red-500' ? 'currentColor' : 'none'} /></button>}</div>
         <h3><Link to={`/jobs/${job._id}`}>{job.title}</Link></h3><p className="job-headline">{job.headline}</p>
         <div className="job-meta"><span><MapPin size={15} />{job.location}</span>{job.salary && <span><Banknote size={15} />₹{Number(job.salary).toLocaleString('en-IN')}</span>}</div>
-        <div className="job-card-footer"><span className={user?.userType === 'admin' ? `company-status status-${job.verifiedJob}` : 'job-tag'}>{user?.userType === 'admin' ? job.verifiedJob || 'Not provided' : myJob ? 'Your listing' : 'Explore opportunity'}</span><Link to={`/jobs/${job._id}`} className="job-detail-link">View role <ArrowUpRight size={17} /></Link></div>
+        <div className="job-card-footer"><span className={user?.userType === 'admin' ? `company-status status-${job.verifiedJob}` : 'job-tag'}>{user?.userType === 'admin' ? job.verifiedJob || 'Not provided' : myJob ? 'Your listing' : 'Explore opportunity'}</span><Link to={`/jobs/${job._id}`} className="job-detail-link">{user?.userType === 'admin' ? 'Review job' : 'View role'} <ArrowUpRight size={17} /></Link></div>
     </article>;
 }
 JobCard.propTypes = { job: PropTypes.object.isRequired };
