@@ -602,3 +602,50 @@ input, textarea, select { transition: border-color 180ms ease, box-shadow 180ms 
 @media (max-width: 700px) { .app-navigation .header-inner { min-height: 76px; padding: 15px 20px; } .app-navigation .brand { font-size: 28px; } }
 @media (prefers-reduced-motion: reduce) { .app-navigation .mobile-navigation { animation: none !important; } }
 html { scroll-padding-top: 100px; }
+
+/* Shared company and job creation/editing forms. */
+.employer-form-layout { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 22px; align-items: start; }
+.employer-editor { padding: 28px; display: flex; flex-direction: column; gap: 28px; min-width: 0; }
+.employer-form-section { display: flex; flex-direction: column; gap: 20px; }
+.employer-form-section + .employer-form-section { border-top: 1px solid hsl(var(--border)); padding-top: 28px; }
+.employer-section-heading { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 3px; }
+.employer-section-heading > span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: #e8eddf; color: #638254; font-size: 10px; font-weight: 600; flex-shrink: 0; }
+.employer-section-heading h2 { font-size: 20px; font-weight: 600; letter-spacing: -.5px; margin: 0 0 7px; }
+.employer-section-heading p { font-size: 11px; line-height: 1.8; color: hsl(var(--muted-foreground)); }
+.employer-editor .auth-field-row { gap: 16px; }
+.employer-field select { width: 100%; min-width: 0; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); color: hsl(var(--foreground)); border-radius: 7px; font-size: 13px; padding: 12px; line-height: 1.5; }
+.employer-field select:focus { outline: 3px solid #8fba7950; outline-offset: 2px; }
+.employer-field textarea { resize: vertical; min-height: 150px; }
+.employer-field input:disabled, .employer-field select:disabled { opacity: .6; cursor: not-allowed; background: hsl(var(--secondary)); }
+.required-mark { color: #8a7354; }
+.field-hint { font-size: 10px; line-height: 1.7; color: hsl(var(--muted-foreground)); margin-top: 6px; }
+.employer-form-guide { position: sticky; top: 108px; padding: 23px 20px; border-radius: 10px; background: #e9eddf; color: #4c6442; }
+.employer-form-guide .eyebrow { color: #738267; font-size: 8px; letter-spacing: 1px; }
+.employer-form-guide h2 { font-size: 23px; line-height: 1.25; letter-spacing: -.6px; margin: 15px 0 22px; font-weight: 500; }
+.employer-form-guide ul { display: flex; flex-direction: column; gap: 17px; }
+.employer-form-guide li { display: flex; align-items: flex-start; gap: 9px; font-size: 11px; line-height: 1.9; }
+.employer-form-guide li svg { flex-shrink: 0; margin-top: 4px; }
+.employer-review-note { font-size: 10px; line-height: 1.8; padding-top: 20px; margin-top: 23px; border-top: 1px solid #cbd4bf; }
+.employer-form-actions { display: flex; justify-content: flex-end; gap: 12px; padding-top: 24px; border-top: 1px solid hsl(var(--border)); }
+.employer-form-actions button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.company-logo-upload { display: flex; align-items: center; gap: 17px; padding: 20px; border: 1px dashed #aebd9f; border-radius: 9px; background: hsl(var(--background)); }
+.company-logo-upload > div { min-width: 0; }
+.company-logo-upload .company-logo { width: 65px; height: 65px; font-size: 21px; }
+.company-logo-upload label { font-size: 12px; font-weight: 600; }
+.company-logo-upload label > span { font-size: 9px; color: hsl(var(--muted-foreground)); font-weight: 400; margin-left: 5px; }
+.company-logo-upload p { font-size: 10px; color: hsl(var(--muted-foreground)); margin: 6px 0 12px; }
+.company-logo-upload input { display: block; max-width: 100%; font-size: 10px; color: hsl(var(--muted-foreground)); }
+.company-logo-upload input::file-selector-button { background: hsl(var(--card)); color: hsl(var(--foreground)); border: 1px solid hsl(var(--border)); padding: 7px 9px; border-radius: 5px; margin-right: 9px; cursor: pointer; }
+.job-company-context { display: flex; align-items: center; gap: 11px; border: 1px solid hsl(var(--border)); border-radius: 7px; padding: 13px; }
+.job-company-context svg { color: #7a9270; }
+.job-company-context span { font-size: 10px; color: hsl(var(--muted-foreground)); display: block; margin-bottom: 5px; }
+.job-company-context strong { display: block; font-size: 13px; font-weight: 500; }
+.form-company-notice { font-size: 11px; line-height: 1.8; padding: 13px; border-radius: 7px; background: #f5eddc; color: #80673f; }
+.form-company-notice a { display: inline-flex; align-items: center; gap: 6px; text-decoration: underline; text-underline-offset: 3px; margin-top: 7px; }
+.dark .employer-section-heading > span { background: #2d422e; color: #bbd1a8; }
+.dark .employer-form-guide { background: #283c2c; color: #bfd0af; }
+.dark .employer-form-guide .eyebrow { color: #a2b294; }
+.dark .employer-review-note { border-color: #485c3e; }
+.dark .form-company-notice { background: #423c29; color: #d8c59e; }
+@media (max-width: 1150px) { .employer-form-layout { grid-template-columns: minmax(0, 1fr); } .employer-form-guide { position: static; order: -1; padding: 19px 22px; } .employer-form-guide h2 { font-size: 20px; margin: 10px 0 14px; } .employer-form-guide ul { display: none; } .employer-review-note { padding: 0; border: 0; margin-top: 10px; } }
+@media (max-width: 700px) { .employer-editor { padding: 23px; } .employer-editor .auth-field-row { grid-template-columns: 1fr; gap: 20px; } .company-logo-upload { padding: 15px; gap: 12px; align-items: flex-start; } .company-logo-upload .company-logo { width: 48px; height: 48px; font-size: 16px; } .employer-form-actions { flex-wrap: wrap; } .employer-form-actions > * { flex: 1; } }
