@@ -656,3 +656,6 @@ html { scroll-padding-top: 100px; }
 .header-account-menu a[aria-current="page"] { background: #e6ecdc; color: #35573b; font-weight: 600; }
 .dark .header-account-menu a[aria-current="page"] { background: #2a402f; color: #d4e3c5; }
 @media (max-width: 1050px) { .account-mobile-links { display: block; } .header-account-menu { min-width: min(270px, calc(100vw - 32px)); } }
+
+.header-account { border: 1px solid #a8b99b; border-radius: 999px; padding: 4px 9px 4px 4px; background: hsl(var(--card)); }
+.dark .header-account { border-color: #63765a; }
