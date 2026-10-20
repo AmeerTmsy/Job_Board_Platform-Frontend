@@ -659,3 +659,26 @@ html { scroll-padding-top: 100px; }
 
 .header-account { border: 1px solid #a8b99b; border-radius: 999px; padding: 4px 9px 4px 4px; background: hsl(var(--card)); }
 .dark .header-account { border-color: #63765a; }
+
+/* Employer detail uses the same job presentation, with hiring tools alongside. */
+.manage-applications-link { display: flex; width: 100%; margin-top: 12px; }
+.job-management-status { border-top: 1px solid hsl(var(--border)); padding-top: 20px; margin-top: 23px; }
+.job-management-status span { display: block; font-size: 10px; color: hsl(var(--muted-foreground)); margin-bottom: 7px; }
+.job-management-status strong { font-size: 12px; font-weight: 500; }
+.job-preview-link, .company-profile-link { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; }
+.job-preview-link { margin-top: 21px; }
+.company-profile-link { margin-top: 6px; }
+.job-applicants-section { scroll-margin-top: 105px; padding-top: 15px; margin-top: 30px; border-top: 1px solid hsl(var(--border)); }
+.job-applicants-section > .section-heading { margin: 20px 0 25px; }
+.job-applicants-section h2 { font-size: 27px; font-weight: 600; margin: 10px 0; }
+.job-applicants-section .section-heading p { line-height: 1.8; }
+.applicant-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.candidate-application { display: flex; flex-direction: column; min-width: 0; }
+.candidate-application-top { display: flex; align-items: center; gap: 14px; }
+.candidate-application-top .profile-avatar { width: 48px; height: 48px; font-size: 16px; }
+.candidate-application-top h3 { font-weight: 600; font-size: 16px; margin-bottom: 6px; overflow-wrap: anywhere; }
+.candidate-application-top p { font-size: 12px; color: hsl(var(--muted-foreground)); }
+.candidate-experience { display: flex; align-items: center; gap: 7px; font-size: 11px; color: hsl(var(--muted-foreground)); margin: 20px 0; }
+.candidate-application-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; border-top: 1px solid hsl(var(--border)); padding-top: 17px; margin-top: auto; }
+.applicant-empty { background: hsl(var(--card)); padding: 35px 25px; }
+@media (max-width: 700px) { .applicant-grid { grid-template-columns: 1fr; } .job-applicants-section h2 { font-size: 25px; } }

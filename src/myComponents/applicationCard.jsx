@@ -1,23 +1,13 @@
-import useThemeStyle from '@/myHooks/useThemeStyle';
-import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { ArrowUpRight, FileText, BriefcaseBusiness } from 'lucide-react';
+import ProfileAvatar from './ProfileAvatar';
 
-function ApplicationCard({application}) {
-    const themeStyle = useThemeStyle();
-    return (
-        <div key={application._id} className={`p-5 border m-1 rounded-sm w-[11.5rem] sm:w-[13rem] ${themeStyle}`}>
-            <h2 className="text-lg font-medium ">{application?.userId.name}</h2>
-            <p className="text-sm text-gray-600">{application.userId.profession}</p>
-            <p className="text-sm text-gray-600">experience: {application.userId.experienced}</p>
-            <a
-                href={application.resume}
-                target="_blank"
-                rel="noopener noreferrer" // For security purposes
-                className="bg-blue-600 text-white text-xs px-1 rounded-full hover:bg-blue-700 block text-center mt-3"
-            > View Resume </a>
-            <Link to={`/employer/employees/${application.userId._id}`} className='cursor-pointer text-xs text-blue-600 underline mt-3 block'>see the candidate</Link>
-        </div>
-    );
+export default function ApplicationCard({ application }) {
+    const candidate = application.userId;
+    let resume;
+    try { const url = new URL(application.resume); if (['https:', 'http:'].includes(url.protocol)) resume = url.href; } catch { /* Missing or invalid resumes have no download link. */ }
+    const experience = candidate?.experienced;
+    return <article className="application-card candidate-application"><div className="candidate-application-top"><ProfileAvatar profile={candidate || { name: 'Candidate' }} /><div><h3>{candidate?.name || 'Candidate unavailable'}</h3><p>{candidate?.profession || 'Profession not provided'}</p></div></div>{experience !== undefined && experience !== null && <p className="candidate-experience"><BriefcaseBusiness size={14} />{experience} {Number(experience) === 1 ? 'year' : 'years'} of experience</p>}<div className="candidate-application-actions">{resume ? <a className="outline-action" href={resume} target="_blank" rel="noopener noreferrer"><FileText size={15} />View resume</a> : <span className="field-hint">Resume unavailable</span>}{candidate?._id && <Link className="job-detail-link" to={`/employer/employees/${candidate._id}`}>View profile <ArrowUpRight size={16} /></Link>}</div></article>;
 }
-
-export default ApplicationCard;
+ApplicationCard.propTypes = { application: PropTypes.object.isRequired };
