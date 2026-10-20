@@ -459,3 +459,37 @@ h2 { letter-spacing: -1px; }
 .dark .candidate-note { background: #293e2d; color: #b6c8a7; }
 @media (max-width: 950px) { .talent-hero { gap: 30px; } .talent-art { padding: 24px; } .talent-art-people > span { width: 66px; height: 66px; } .talent-art > strong { font-size: 30px; } }
 @media (max-width: 700px) { .talent-hero { grid-template-columns: 1fr; } .talent-hero h1 { font-size: 38px; } .talent-art { transform: none; } .talent-controls { gap: 18px; } .talent-controls .industry-filter { width: 100%; } .talent-card { padding: 24px; } .candidate-profile .profile-top { flex-wrap: wrap; } .candidate-profile .profile-top > .primary-link { margin-top: 33px; } .candidate-profile .profile-cover > span:first-child { max-width: 160px; } .candidate-profile .profile-cover > span:last-child { font-size: 40px; } .candidate-note { padding: 21px; } .candidate-footer { align-items: flex-start; flex-direction: column; } }
+
+/* Employer collections and management cards. */
+.employer-management-intro { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 23px; margin-bottom: 23px; background: #e8eddf; color: #4e6845; border-radius: 11px; }
+.employer-management-intro > div { display: flex; gap: 13px; align-items: center; }
+.employer-management-intro > div > svg { flex-shrink: 0; }
+.employer-management-intro p { font-size: 12px; line-height: 1.8; max-width: 330px; }
+.employer-management-intro > a { flex-shrink: 0; }
+.employer-stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin-bottom: 25px; }
+.employer-stats button { position: relative; text-align: left; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 9px; padding: 17px; }
+.employer-stats button:hover { border-color: #9aaf8a; }
+.employer-stats button[aria-pressed="true"] { border-color: #739468; box-shadow: inset 0 0 0 1px #739468; }
+.employer-stats button > span:first-child { display: block; font-size: 10px; color: hsl(var(--muted-foreground)); margin-bottom: 10px; }
+.employer-stats strong { font-size: 27px; font-weight: 500; line-height: 1; letter-spacing: -1px; }
+.stat-dot { position: absolute; right: 16px; bottom: 20px; width: 7px; height: 7px; border-radius: 50%; background: #9da696; }
+.stat-dot.approved { background: #77a269; }
+.stat-dot.pending { background: #d0ad65; }
+.stat-dot.rejected { background: #c37d74; }
+.management-controls { display: flex; align-items: center; gap: 18px; }
+.management-search { display: flex; flex: 1; align-items: center; gap: 10px; padding: 11px 14px; border: 1px solid hsl(var(--border)); border-radius: 7px; background: hsl(var(--card)); color: hsl(var(--muted-foreground)); }
+.management-search input { background: transparent; width: 100%; min-width: 0; font-size: 12px; color: hsl(var(--foreground)); }
+.management-results { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin: 20px 0; font-size: 11px; color: hsl(var(--muted-foreground)); }
+.management-results button { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.management-card h2 { font-size: 19px; font-weight: 600; letter-spacing: -.4px; line-height: 1.4; overflow-wrap: anywhere; }
+.management-card .company-status { margin-left: auto; flex-shrink: 0; font-size: 9px; }
+.management-card .job-card-header { gap: 10px; flex-wrap: wrap; }
+.management-card .company-name { flex: 1; }
+.management-edit { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: hsl(var(--muted-foreground)); }
+.management-edit:hover { color: hsl(var(--foreground)); }
+.management-company-location { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: hsl(var(--muted-foreground)); margin: auto 0 20px; }
+.management-card.company-card .company-card-description { margin-bottom: 20px; }
+.management-card .job-card-footer { gap: 12px; flex-wrap: wrap; }
+.dark .employer-management-intro { background: #293e2d; color: #bed0ad; }
+@media (max-width: 1000px) { .employer-management-intro { align-items: flex-start; flex-direction: column; gap: 17px; } .employer-management-intro p { max-width: none; } .employer-stats { gap: 9px; } .employer-stats button { padding: 15px 12px; } .stat-dot { right: 12px; } .management-controls { align-items: stretch; flex-direction: column; gap: 13px; } .management-controls .industry-filter { justify-content: flex-end; } }
+@media (max-width: 700px) { .employer-stats { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 11px; } .employer-stats button { padding: 18px; } .stat-dot { right: 18px; } .employer-management-intro { padding: 20px; } .management-controls .industry-filter select { flex: 1; max-width: none; } .management-search { padding: 13px; } }
