@@ -521,3 +521,27 @@ h2 { letter-spacing: -1px; }
 
 .infinite-scroll { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; min-height: 80px; padding: 22px 0 8px; text-align: center; }
 .infinite-scroll p { display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 12px; color: hsl(var(--muted-foreground)); }
+
+/* Light, one-time entrances and predictable native scrolling. */
+:root { --motion-ease: cubic-bezier(.22, 1, .36, 1); }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+.motion-wait { opacity: 0; }
+.motion-wait:focus-within { opacity: 1; }
+.job-card, .company-card, .talent-card, .application-card, .account-shortcuts > a { transition: transform 240ms var(--motion-ease), box-shadow 240ms var(--motion-ease), border-color 220ms ease; }
+button, a { transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, box-shadow 220ms var(--motion-ease), transform 220ms var(--motion-ease), opacity 180ms ease; }
+input, textarea, select { transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease; }
+.auth-field input:focus, .auth-field textarea:focus, .management-search:focus-within, .job-search:focus-within { border-color: #8fa982; box-shadow: 0 0 0 3px #7d9b691a; }
+.infinite-scroll { min-height: 90px; }
+.infinite-scroll > p { animation: loading-label-in 180ms ease both; }
+@keyframes loading-label-in { from { opacity: 0; } to { opacity: 1; } }
+@media (hover: hover) and (pointer: fine) {
+  .application-card:hover { transform: translateY(-2px); border-color: #91ab87; box-shadow: 0 9px 24px #223c250a; }
+  .primary-link:not(:disabled):active, .outline-action:not(:disabled):active, .moderation-button:not(:disabled):active { transform: translateY(1px); }
+  .job-detail-link:hover svg, .company-card-bottom > a:hover svg, .talent-card-bottom > a:hover svg { transform: translate(2px, -2px); }
+}
+.job-detail-link svg, .company-card-bottom > a svg, .talent-card-bottom > a svg { transition: transform 220ms var(--motion-ease); }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .motion-wait { opacity: 1; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

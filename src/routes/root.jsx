@@ -2,12 +2,13 @@ import { Outlet, useLoaderData, useRevalidator } from 'react-router-dom';
 import Header from '@/myComponents/Header';
 import Footer from '@/myComponents/Footer';
 import StorNSdata from '@/verified/storNSdata';
+import MotionSurface from '@/myComponents/MotionSurface';
 
 export default function Root() {
     const { sessionError } = useLoaderData();
     const revalidator = useRevalidator();
     return (
-        <div className="app-shell">
+        <MotionSurface>
             <Header />
             {sessionError ? (
                 <main className="job-detail-page">
@@ -21,6 +22,6 @@ export default function Root() {
                 </main>
             ) : <><StorNSdata /><Outlet /></>}
             <Footer />
-        </div>
+        </MotionSurface>
     );
 }

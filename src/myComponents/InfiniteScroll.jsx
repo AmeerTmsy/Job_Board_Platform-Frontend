@@ -8,7 +8,7 @@ export default function InfiniteScroll({ loading, error, hasMore, loadMore, coun
         if (loading || error || !hasMore || !('IntersectionObserver' in window)) return;
         const observer = new IntersectionObserver(entries => {
             if (entries.some(entry => entry.isIntersecting)) loadMore();
-        }, { rootMargin: '0px 0px 200px 0px' });
+        }, { rootMargin: '0px 0px 400px 0px' });
         if (sentinel.current) observer.observe(sentinel.current);
         return () => observer.disconnect();
     }, [loading, error, hasMore, loadMore]);
