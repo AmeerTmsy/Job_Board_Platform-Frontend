@@ -10,18 +10,11 @@ function JobCard({ job }) {
     const { user } = useSelector(state => state.user);
     const { employeeSavedJobs } = useSelector(state => state.employeeSavedJobs);
     const { employerJobs } = useSelector(state => state.employerJobs);
-    const [badgColor, setBadgColor] = useState('');
     const [saveJobColor, setSaveJobColor] = useState('');
     const [myJob, setMyJob] = useState(false);
     const dispatch = useDispatch();
 
 
-
-    useEffect(() => {
-        if (job.verifiedJob === 'approved') setBadgColor('bg-green-200 text-green-700');
-        else if (job.verifiedJob === 'rejected') setBadgColor('bg-red-200 text-red-600');
-        else if (job.verifiedJob === 'pending') setBadgColor('bg-yellow-200 text-yellow-700');
-    }, [job]);
 
     useEffect(() => {
         const isSaved = employeeSavedJobs.some(item => item.jobId?._id === job._id);
@@ -51,7 +44,7 @@ function JobCard({ job }) {
         <div className="job-card-header"><span className="company-monogram">{(job.company?.name || 'H').slice(0, 2).toUpperCase()}</span><span className="company-name">{job.company?.name || 'Company'}</span>{user?.userType === 'employee' && <button className={`save-job ${saveJobColor}`} aria-label={saveJobColor === 'text-red-500' ? 'Unsave job' : 'Save job'} aria-pressed={saveJobColor === 'text-red-500'} onClick={manageJobSave}><Bookmark size={19} fill={saveJobColor === 'text-red-500' ? 'currentColor' : 'none'} /></button>}</div>
         <h3><Link to={`/jobs/${job._id}`}>{job.title}</Link></h3><p className="job-headline">{job.headline}</p>
         <div className="job-meta"><span><MapPin size={15} />{job.location}</span>{job.salary && <span><Banknote size={15} />₹{Number(job.salary).toLocaleString('en-IN')}</span>}</div>
-        <div className="job-card-footer"><span className="job-tag">{user?.userType === 'admin' ? <span className={badgColor}>{job.verifiedJob}</span> : myJob ? 'Your listing' : 'Explore opportunity'}</span><Link to={`/jobs/${job._id}`} className="job-detail-link">View role <ArrowUpRight size={17} /></Link></div>
+        <div className="job-card-footer"><span className={user?.userType === 'admin' ? `company-status status-${job.verifiedJob}` : 'job-tag'}>{user?.userType === 'admin' ? job.verifiedJob || 'Not provided' : myJob ? 'Your listing' : 'Explore opportunity'}</span><Link to={`/jobs/${job._id}`} className="job-detail-link">View role <ArrowUpRight size={17} /></Link></div>
     </article>;
 }
 JobCard.propTypes = { job: PropTypes.object.isRequired };

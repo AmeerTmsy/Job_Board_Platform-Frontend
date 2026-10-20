@@ -493,3 +493,9 @@ h2 { letter-spacing: -1px; }
 .dark .employer-management-intro { background: #293e2d; color: #bed0ad; }
 @media (max-width: 1000px) { .employer-management-intro { align-items: flex-start; flex-direction: column; gap: 17px; } .employer-management-intro p { max-width: none; } .employer-stats { gap: 9px; } .employer-stats button { padding: 15px 12px; } .stat-dot { right: 12px; } .management-controls { align-items: stretch; flex-direction: column; gap: 13px; } .management-controls .industry-filter { justify-content: flex-end; } }
 @media (max-width: 700px) { .employer-stats { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 11px; } .employer-stats button { padding: 18px; } .stat-dot { right: 18px; } .employer-management-intro { padding: 20px; } .management-controls .industry-filter select { flex: 1; max-width: none; } .management-search { padding: 13px; } }
+
+/* Verification colors belong to the entire badge, including its padding. */
+.company-status { display: inline-flex; align-items: center; justify-content: center; line-height: 1.4; white-space: nowrap; font-weight: 500; }
+.dark .status-approved { background: #29452e; color: #bdddb3; }
+.dark .status-pending { background: #483d24; color: #ecd399; }
+.dark .status-rejected { background: #4b2e2e; color: #efb5af; }
