@@ -649,3 +649,10 @@ html { scroll-padding-top: 100px; }
 .dark .form-company-notice { background: #423c29; color: #d8c59e; }
 @media (max-width: 1150px) { .employer-form-layout { grid-template-columns: minmax(0, 1fr); } .employer-form-guide { position: static; order: -1; padding: 19px 22px; } .employer-form-guide h2 { font-size: 20px; margin: 10px 0 14px; } .employer-form-guide ul { display: none; } .employer-review-note { padding: 0; border: 0; margin-top: 10px; } }
 @media (max-width: 700px) { .employer-editor { padding: 23px; } .employer-editor .auth-field-row { grid-template-columns: 1fr; gap: 20px; } .company-logo-upload { padding: 15px; gap: 12px; align-items: flex-start; } .company-logo-upload .company-logo { width: 48px; height: 48px; font-size: 16px; } .employer-form-actions { flex-wrap: wrap; } .employer-form-actions > * { flex: 1; } }
+
+/* Signed-in mobile navigation lives in the account dropdown. */
+.account-mobile-links { display: none; }
+.header-account-menu { max-height: min(calc(100dvh - 100px), var(--radix-dropdown-menu-content-available-height, 80vh)); overflow-y: auto; overscroll-behavior: contain; max-width: calc(100vw - 32px); }
+.header-account-menu a[aria-current="page"] { background: #e6ecdc; color: #35573b; font-weight: 600; }
+.dark .header-account-menu a[aria-current="page"] { background: #2a402f; color: #d4e3c5; }
+@media (max-width: 1050px) { .account-mobile-links { display: block; } .header-account-menu { min-width: min(270px, calc(100vw - 32px)); } }
